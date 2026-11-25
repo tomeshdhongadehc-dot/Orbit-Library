@@ -1,0 +1,127 @@
+{
+ "lessons": [
+  {
+   "id": "queue-intro",
+   "title": "Why Async: Decoupling, Load Levelling, Fan-out"
+  },
+  {
+   "id": "sync-vs-async",
+   "title": "Sync vs Async Flows, 202 and Status Polling"
+  },
+  {
+   "id": "queue-vocabulary",
+   "title": "Queue, Topic, Log, Task Queue, Scheduler"
+  },
+  {
+   "id": "message-anatomy",
+   "title": "Message Anatomy, Size Limits and Claim Check"
+  },
+  {
+   "id": "consumption-mechanics",
+   "title": "Push vs Pull, Prefetch and Polling"
+  },
+  {
+   "id": "rabbitmq",
+   "title": "RabbitMQ Deep Dive"
+  },
+  {
+   "id": "sqs",
+   "title": "Amazon SQS Deep Dive"
+  },
+  {
+   "id": "sns-eventbridge",
+   "title": "SNS, EventBridge, Fan-out and Routing"
+  },
+  {
+   "id": "kafka-core",
+   "title": "Kafka: Log, Partitions, Offsets, Groups"
+  },
+  {
+   "id": "kafka-reliability",
+   "title": "Kafka Reliability, Transactions, Operations"
+  },
+  {
+   "id": "redis-queues",
+   "title": "Redis queues and job libraries"
+  },
+  {
+   "id": "other-brokers",
+   "title": "NATS JetStream, Pub/Sub, Service Bus, Pulsar"
+  },
+  {
+   "id": "db-as-queue",
+   "title": "Database as queue and managed task services"
+  },
+  {
+   "id": "ack-semantics",
+   "title": "Acknowledgements and delivery semantics"
+  },
+  {
+   "id": "idempotent-consumers",
+   "title": "Idempotent consumers, dedup and the inbox"
+  },
+  {
+   "id": "ordering",
+   "title": "Ordering"
+  },
+  {
+   "id": "consumer-time",
+   "title": "Visibility timeout, leases and stuck jobs"
+  },
+  {
+   "id": "retries-backoff",
+   "title": "Retries, backoff, jitter and retry storms"
+  },
+  {
+   "id": "dlq-redrive",
+   "title": "Dead-letter queues, poison messages, redrive"
+  },
+  {
+   "id": "backpressure-fairness",
+   "title": "Backpressure, rate limits, priority, fairness"
+  },
+  {
+   "id": "shutdown-batching",
+   "title": "Graceful shutdown, checkpointing, batching"
+  },
+  {
+   "id": "delayed-scheduled",
+   "title": "Delayed and scheduled messages, cron jobs"
+  },
+  {
+   "id": "outbox-cdc",
+   "title": "Dual write, transactional outbox, inbox, CDC"
+  },
+  {
+   "id": "sagas-workflows",
+   "title": "Sagas and workflow engines"
+  },
+  {
+   "id": "eda-patterns",
+   "title": "Event-driven patterns, CQRS, request-reply"
+  },
+  {
+   "id": "schema-evolution",
+   "title": "Schema evolution, versioning, CloudEvents"
+  },
+  {
+   "id": "observability-testing",
+   "title": "Observability and testing"
+  },
+  {
+   "id": "security-cost-capacity",
+   "title": "Security, cost, capacity"
+  },
+  {
+   "id": "failure-playbook",
+   "title": "Failure scenarios playbook"
+  }
+ ],
+ "changelog": [
+  {
+   "version": "1.0",
+   "date": "2026-11-24",
+   "note": "First build: 29 lessons, 609 quiz questions, 190 concept questions, 30 puzzles, 20 hands-on tasks, 28 scenarios, 21 special topics, revision hub and sources and proofs tab. Broker, SQL and config snippets are illustrative unless a Node simulation computed them."
+  }
+ ]
+}

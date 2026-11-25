@@ -32,7 +32,7 @@ export default function Home() {
             <Link key={s.slug} href={`/shelf/${s.slug}`} className="o-card o-rise">
               <h3 className="o-card-title">{s.name}</h3>
               <p className="o-muted">
-                {s.count} {s.count === 1 ? "item" : "items"} · {getTracks(s.slug).length} tracks
+                {s.count} {s.count === 1 ? "item" : "items"} · {getTracks(s.slug).length} {getTracks(s.slug).length === 1 ? "track" : "tracks"}
               </p>
             </Link>
           ))}

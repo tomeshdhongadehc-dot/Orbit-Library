@@ -1,0 +1,994 @@
+<title>JS in Motion</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@500;600;700&display=swap">
+<style>
+/* Layout: lesson tree | isometric stage with stepper | explanation panel. Warm paper, thick ink outlines, chunky 3D blocks. */
+:root {
+  --paper: #f3eee2; --panel: #fbf8f0; --ink: #1d1b15; --muted: #6a6454; --line: #d9d0bb; --shadow: rgba(40, 30, 10, .16);
+  --glow: rgba(255, 190, 40, .85); --btn: #bfe3a0; --idea: #e7defb; --know: #dcf0d2; --warn: #fbe0c4; --problem: #f9d2cf;
+  --mono: "JetBrains Mono", ui-monospace, Consolas, monospace; --disp: "Space Grotesk", system-ui, sans-serif; --body: "Inter", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #15130e; --panel: #1e1b15; --ink: #f2ecda; --muted: #a79d86; --line: #3b3629; --shadow: rgba(0, 0, 0, .35);
+    --glow: rgba(255, 200, 70, .7); --btn: #3f5a2e; --idea: #2f2845; --know: #263a22; --warn: #4a3320; --problem: #4a2724; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #15130e; --panel: #1e1b15; --ink: #f2ecda; --muted: #a79d86; --line: #3b3629; --shadow: rgba(0, 0, 0, .35);
+  --glow: rgba(255, 200, 70, .7); --btn: #3f5a2e; --idea: #2f2845; --know: #263a22; --warn: #4a3320; --problem: #4a2724; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { max-width: 100%; overflow-x: clip; }
+body { background: var(--paper); color: var(--ink); font: 14px/1.55 var(--body); padding-inline: max(14px, env(safe-area-inset-left, 0px)) max(14px, env(safe-area-inset-right, 0px)); padding-block: 0 28px; }
+button { font: inherit; color: inherit; cursor: pointer; }
+:focus-visible { outline: 3px solid #6c8cff; outline-offset: 2px; }
+.top { display: flex; align-items: center; gap: 14px; padding: 12px 0; flex-wrap: wrap; }
+.brand { font: 700 19px var(--disp); display: flex; align-items: center; gap: 8px; color: var(--ink); text-decoration: none; }
+.mark { background: #f7df1e; color: #1d1b15; border: 2px solid var(--ink); border-radius: 6px; font: 700 13px var(--mono); padding: 1px 6px; box-shadow: 2px 2px 0 var(--ink); }
+.spacer { flex: 1; }
+.pg { font: 500 12px var(--mono); color: var(--muted); display: flex; align-items: center; gap: 8px; }
+.bar { width: 120px; height: 8px; border: 1.5px solid var(--ink); border-radius: 6px; overflow: hidden; background: var(--panel); }
+.bar i { display: block; height: 100%; background: var(--btn); }
+.menu { display: none; border: 2px solid var(--ink); background: var(--panel); border-radius: 8px; padding: 5px 12px; font: 600 13px var(--mono); box-shadow: 2px 2px 0 var(--ink); }
+.app { display: grid; grid-template-columns: 236px minmax(0, 1fr) 330px; gap: 12px; align-items: start; }
+.side { position: sticky; top: 8px; max-height: calc(100vh - 16px); overflow-y: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 10px; scrollbar-width: thin; }
+.lv { margin-bottom: 4px; }
+.lvh { width: 100%; display: flex; align-items: center; gap: 8px; background: none; border: 0; padding: 6px 4px; font: 600 13px var(--disp); text-align: left; border-radius: 6px; }
+.lvh:hover { background: var(--paper); }
+.sq { width: 14px; height: 14px; border-radius: 4px; border: 2px solid var(--ink); flex: none; }
+.lvh .n { margin-left: auto; font: 500 11px var(--mono); color: var(--muted); }
+.ls { display: none; padding: 2px 0 6px 12px; }
+.lv.open .ls { display: block; }
+.li { display: flex; align-items: center; gap: 7px; width: 100%; text-align: left; background: none; border: 1.5px solid transparent; border-radius: 7px; padding: 5px 8px; font-size: 12.5px; color: var(--ink); }
+.li:hover { background: var(--paper); }
+.li.on { background: var(--btn); border-color: var(--ink); font-weight: 600; }
+.li .ck { width: 13px; height: 13px; border: 1.5px solid var(--muted); border-radius: 3px; flex: none; display: grid; place-items: center; font-size: 10px; line-height: 1; }
+.li.done .ck { background: var(--btn); border-color: var(--ink); }
+.li.done .ck::after { content: "\2713"; }
+.center { min-width: 0; display: grid; gap: 10px; }
+.head h1 { font: 700 clamp(22px, 3.4vw, 30px)/1.1 var(--disp); margin: 2px 0 4px; letter-spacing: -.02em; }
+.crumb { font: 500 12px var(--mono); color: var(--muted); margin: 0; }
+.sub { margin: 0; color: var(--muted); max-width: 70ch; }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+.chip { font: 600 11px var(--mono); border: 1.5px solid var(--ink); border-radius: 999px; padding: 2px 9px; background: var(--panel); }
+.stagebox { position: relative; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+.read { position: absolute; left: 10px; top: 10px; display: flex; gap: 6px; flex-wrap: wrap; z-index: 2; max-width: calc(100% - 190px); }
+.rd { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 4px 10px; min-width: 84px; }
+.rd small { display: block; font: 500 9.5px var(--mono); color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+.rd b { font: 700 13px var(--mono); }
+.tools { position: absolute; right: 10px; top: 10px; display: flex; gap: 6px; z-index: 2; }
+.sbtn { background: var(--panel); border: 2px solid var(--ink); border-radius: 8px; padding: 4px 10px; font: 600 12px var(--mono); box-shadow: 2px 2px 0 var(--ink); }
+.sbtn:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 var(--ink); }
+.scrollx { overflow: hidden; }
+#stageHost { min-width: 0; }
+svg.scene { display: block; width: 100%; height: auto; max-height: calc(100vh - 290px); }
+.gridline { stroke: var(--line); stroke-width: 1; fill: none; opacity: .75; }
+.face { stroke: var(--ink); stroke-width: 2; stroke-linejoin: round; }
+.shadow { fill: var(--shadow); stroke: none; }
+.glyph { font: 700 12px var(--mono); fill: var(--ink); text-anchor: middle; pointer-events: none; }
+.pillbox { fill: var(--panel); stroke: var(--ink); stroke-width: 2; }
+.pt { font: 700 12.5px var(--mono); fill: var(--ink); text-anchor: middle; }
+.ps { font: 500 10.5px var(--mono); fill: var(--muted); text-anchor: middle; }
+.n { transition: transform .75s cubic-bezier(.3, .8, .3, 1); }
+.in { transition: opacity .45s, transform .6s cubic-bezier(.3, 1.4, .5, 1); }
+.in.off { opacity: 0; transform: translateY(-22px) scale(.92); }
+.n.dim .in { opacity: .28; }
+.n.hi .in { filter: drop-shadow(0 0 7px var(--glow)); animation: bob 1.5s ease-in-out infinite; }
+@keyframes bob { 50% { transform: translateY(-5px); } }
+.eg { fill: none; stroke-width: 2.6; stroke-linecap: round; animation: draw .5s ease backwards; }
+@keyframes draw { from { opacity: 0; } to { opacity: 1; } }
+.legend { display: flex; gap: 14px; padding: 6px 12px 10px; font: 500 11px var(--mono); color: var(--muted); flex-wrap: wrap; }
+.stepper { overflow-x: hidden; position: sticky; bottom: 8px; z-index: 6; box-shadow: 0 -6px 14px var(--shadow); background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px 12px; overflow-x: auto; }
+.stepper h5 { margin: 0 0 8px; font: 600 11px var(--mono); text-transform: uppercase; letter-spacing: .06em; display: flex; justify-content: space-between; }
+.dots { display: flex; }
+.dot { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; background: none; border: 0; position: relative; padding: 0 2px; min-width: 0; }
+.dot::before { content: ""; position: absolute; top: 12px; left: -50%; width: 100%; height: 3px; background: var(--line); }
+.dot:first-child::before { display: none; }
+.dot.past::before, .dot.cur::before { background: var(--ink); }
+.dot span.c { position: relative; z-index: 1; width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--ink); background: var(--panel); display: grid; place-items: center; font: 700 11px var(--mono); }
+.dot.past span.c { background: var(--btn); }
+.dot.cur span.c { background: var(--btn); box-shadow: 0 0 0 4px color-mix(in srgb, var(--btn) 55%, transparent); }
+.dot span.l { font: 500 10.5px var(--mono); color: var(--muted); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dot.cur span.l { color: var(--ink); font-weight: 700; }
+.panel { position: sticky; top: 8px; display: grid; gap: 10px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px; }
+.stephead { display: flex; justify-content: space-between; align-items: center; font: 600 11px var(--mono); color: var(--muted); }
+.tag { border: 1.5px solid var(--ink); border-radius: 5px; padding: 1px 7px; font: 700 10px var(--mono); color: var(--ink); letter-spacing: .05em; }
+.tag.PROBLEM { background: var(--problem); } .tag.CONCEPT { background: #dbe8fb; } .tag.TECHNIQUE { background: var(--know); } .tag.WATCH { background: var(--warn); } .tag.RECAP { background: var(--idea); }
+.card h2 { font: 700 20px/1.2 var(--disp); margin: 8px 0; letter-spacing: -.01em; }
+.card p { margin: 0 0 8px; }
+.card code, .kc code { font: 500 12px var(--mono); background: var(--paper); border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; }
+pre.cd { background: #14181f; color: #e6edf3; font: 500 12px/1.6 var(--mono); border-radius: 8px; padding: 10px 12px; margin: 8px 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.kc { border: 1.5px solid var(--ink); border-radius: 10px; padding: 9px 11px; margin-top: 10px; }
+.kc small { display: block; font: 700 9.5px var(--mono); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 2px; }
+.kc.idea { background: var(--idea); } .kc.know { background: var(--know); } .kc.warn { background: var(--warn); }
+.chg { margin-top: 10px; font-size: 12.5px; }
+.chg small { font: 700 9.5px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.chg ul { margin: 4px 0 0; padding-left: 16px; }
+.nav { display: flex; gap: 8px; margin-top: 12px; }
+.nbtn { border: 2px solid var(--ink); border-radius: 9px; padding: 8px 12px; font: 700 13px var(--mono); background: var(--panel); box-shadow: 2px 2px 0 var(--ink); }
+.nbtn.go { background: var(--btn); flex: 1; text-align: left; display: flex; justify-content: space-between; gap: 8px; }
+.nbtn:disabled { opacity: .4; cursor: default; box-shadow: none; }
+.hint { font: 500 10.5px var(--mono); color: var(--muted); margin-top: 8px; }
+.learn h4 { margin: 0 0 6px; font: 700 11px var(--mono); text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+.learn label { display: flex; gap: 8px; align-items: flex-start; font-size: 12.5px; padding: 2px 0; color: var(--muted); }
+.learn label.on { color: var(--ink); }
+.learn .bx { width: 14px; height: 14px; border: 1.5px solid var(--muted); border-radius: 3px; flex: none; margin-top: 2px; display: grid; place-items: center; font-size: 10px; }
+.learn label.on .bx { background: var(--btn); border-color: var(--ink); }
+.learn label.on .bx::after { content: "\2713"; }
+.sidep { border-top: 1px solid var(--line); margin-top: 8px; padding-top: 8px; font: 500 11px var(--mono); }
+.sidep .row { display: flex; justify-content: space-between; padding: 2px 0; color: var(--muted); }
+@media (max-width: 1100px) {
+  .app { grid-template-columns: minmax(0, 1fr); }
+  .menu { display: block; }
+  .side { display: none; position: static; max-height: none; }
+  .side.show { display: block; }
+  .panel { position: static; }
+  .read { max-width: 100%; position: static; padding: 8px 10px 0; }
+  .tools { position: static; padding: 8px 10px 0; }
+  .pg .bar { display: none; }
+}
+@media (max-width: 640px) {
+  body { font-size: 13.5px; }
+  .dot span.l { display: none; }
+  .dot span.c { width: 22px; height: 22px; font-size: 10px; }
+  .dot::before { top: 10px; }
+  .sbtn { padding: 3px 8px; }
+  .rd { min-width: 0; }
+  .top { gap: 8px; }
+  .brand { font-size: 17px; }
+  .card h2 { font-size: 18px; }
+  svg.scene { max-height: 56vh; }
+  .stepper { padding: 8px 10px; }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+</style>
+
+<header class="top">
+  <a class="brand" href="#how-js-runs"><span class="mark">JS</span><span>JS in Motion</span></a>
+  <button class="menu" id="menuBtn" aria-expanded="false">Lessons</button>
+  <span class="spacer"></span>
+  <span class="pg" id="pg"></span>
+</header>
+<div class="app">
+  <aside class="side" id="side" aria-label="Lessons"></aside>
+  <section class="center">
+    <div class="head"><p class="crumb" id="crumb"></p><h1 id="title"></h1><p class="sub" id="sub"></p><div class="chips" id="chips"></div></div>
+    <div class="stagebox">
+      <div class="read" id="read"></div>
+      <div class="tools"><button class="sbtn" id="replay">Replay</button><button class="sbtn" id="play">Play</button></div>
+      <div class="scrollx"><div id="stageHost"></div></div>
+      <div class="legend"><span>Each block is a piece of your program</span><span>Arrows show data or control moving</span><span>Glowing = look here</span></div>
+    </div>
+    <div class="stepper" id="stepper"></div>
+  </section>
+  <aside class="panel" id="panel"></aside>
+</div>
+
+<script>
+/* ===== 3D scene engine: isometric blocks in SVG ===== */
+const SVGNS = 'http://www.w3.org/2000/svg';
+function sv(tag, attrs, ...kids) {
+  const e = document.createElementNS(SVGNS, tag);
+  for (const [k, v] of Object.entries(attrs || {})) { if (k === 'style') e.style.cssText = v; else e.setAttribute(k, v); }
+  for (const c of kids.flat()) { if (c != null && c !== false) e.append(c.nodeType ? c : document.createTextNode(c)); }
+  return e;
+}
+const OX = 450, OY = 262, TW = 44, TH = 22;
+const rp = (x, y, z) => [(x - y) * TW, (x + y) * TH - z];
+const slotXY = (p) => ({ x: p[0] + p[1], y: -p[0] + p[1] });
+const PAL = { amber: [41, 92], orange: [22, 90], red: [4, 74], pink: [334, 70], purple: [262, 58], blue: [212, 78], teal: [176, 56], green: [140, 50], gray: [38, 10] };
+let DARK = false;
+const face = (c, w) => { const [h, s] = PAL[c] || PAL.gray; const L = DARK ? { t: 50, l: 40, r: 31 } : { t: 87, l: 77, r: 65 }; return `hsl(${h} ${DARK ? Math.round(s * .8) : s}% ${L[w]}%)`; };
+const strokeOf = (c) => { const [h, s] = PAL[c] || PAL.gray; return `hsl(${h} ${s}% ${DARK ? 66 : 36}%)`; };
+const poly = (pts, fill, cls) => sv('polygon', { points: pts.map(p => p.join(',')).join(' '), class: cls || 'face', style: fill ? `fill:${fill}` : '' });
+function pill(t, s, y) {
+  const w = Math.max(String(t).length * 7.5, s ? String(s).length * 6.2 : 0) + 20, h = s ? 38 : 25;
+  const g = sv('g');
+  g.append(sv('rect', { x: -w / 2, y: y - h / 2, width: w, height: h, rx: 9, class: 'pillbox' }));
+  g.append(sv('text', { x: 0, y: y + (s ? -3 : 4.5), class: 'pt' }, t));
+  if (s) g.append(sv('text', { x: 0, y: y + 11, class: 'ps' }, s));
+  return g;
+}
+function drawNode(n) {
+  const g = sv('g'), lab = sv('g'), c = n.c || 'gray', k = n.k || 'cube';
+  if (k === 'cube') {
+    const w = n.w ?? 1, d = n.d ?? 1, h = n.h ?? 34, a = w / 2, b = d / 2;
+    g.append(poly([rp(-a, -b, 0), rp(a, -b, 0), rp(a, b, 0), rp(-a, b, 0)].map(([x, y]) => [x + 8, y + 5]), null, 'shadow'));
+    g.append(poly([rp(-a, b, h), rp(a, b, h), rp(a, b, 0), rp(-a, b, 0)], face(c, 'l')));
+    g.append(poly([rp(a, -b, h), rp(a, b, h), rp(a, b, 0), rp(a, -b, 0)], face(c, 'r')));
+    g.append(poly([rp(-a, -b, h), rp(a, -b, h), rp(a, b, h), rp(-a, b, h)], face(c, 't')));
+    if (n.g) { const [gx, gy] = rp(0, 0, h); g.append(sv('text', { x: gx, y: gy + 4, class: 'glyph' }, n.g)); }
+    if (n.t) lab.append(pill(n.t, n.s, rp(-a, -b, h)[1] - 22));
+  } else if (k === 'hex') {
+    const r = n.r ?? 40, h = n.h ?? 40, V = [], B = [];
+    for (let i = 0; i < 6; i++) { const x = r * Math.cos(i * Math.PI / 3), y = r * .5 * Math.sin(i * Math.PI / 3); V.push([x, y - h]); B.push([x, y]); }
+    g.append(poly(B.map(([x, y]) => [x + 8, y + 5]), null, 'shadow'));
+    [['r', 0], ['l', 1], ['l', 2]].forEach(([w, i]) => g.append(poly([V[i], V[i + 1], B[i + 1], B[i]], face(c, w))));
+    g.append(poly(V, face(c, 't')));
+    if (n.g) g.append(sv('text', { x: 0, y: -h + 4, class: 'glyph' }, n.g));
+    if (n.t) lab.append(pill(n.t, n.s, -h - r * .5 - 22));
+  } else if (k === 'orb') {
+    const r = n.r ?? 13;
+    g.append(sv('ellipse', { cx: 5, cy: 3, rx: r, ry: r * .5, class: 'shadow' }));
+    g.append(sv('circle', { cx: 0, cy: -r, r, class: 'face', style: `fill:${face(c, 'l')}` }));
+    g.append(sv('circle', { cx: -r * .35, cy: -r * 1.35, r: r * .28, style: 'fill:#fff;opacity:.55' }));
+    if (n.g) g.append(sv('text', { x: 0, y: -r + 4, class: 'glyph' }, n.g));
+    if (n.t) lab.append(pill(n.t, n.s, -2 * r - 20));
+  } else if (k === 'bar') {
+    const w = n.w ?? 160, h = n.h ?? 30;
+    g.append(sv('rect', { x: -w / 2 + 4, y: -h / 2 + 4, width: w, height: h, rx: 9, class: 'shadow' }));
+    g.append(sv('rect', { x: -w / 2, y: -h / 2, width: w, height: h, rx: 9, class: 'face', style: `fill:${face(c, 't')}` }));
+    g.append(sv('text', { x: 0, y: n.s ? -2 : 4.5, class: 'pt' }, n.t || ''));
+    if (n.s) g.append(sv('text', { x: 0, y: 12, class: 'ps' }, n.s));
+  } else if (k === 'tag') {
+    lab.append(pill(n.t || '', n.s, 0));
+  }
+  return { g, lab };
+}
+const anchorOf = (n) => { const k = n.k || 'cube'; if (k === 'cube') return (n.h ?? 34) / 2; if (k === 'hex') return (n.h ?? 40) / 2; if (k === 'orb') return n.r ?? 13; return 0; };
+const semi = (n) => { const k = n.k || 'cube'; if (k === 'hex') return [n.r ?? 40, (n.r ?? 40) * .25 + (n.h ?? 40) / 2]; if (k === 'orb') return [(n.r ?? 13), (n.r ?? 13)]; if (k === 'bar') return [(n.w ?? 160) / 2, (n.h ?? 30) / 2]; if (k === 'tag') return [46, 16]; const w = n.w ?? 1, d = n.d ?? 1; return [(w + d) * 22, (w + d) * 11 + (n.h ?? 34) / 2]; };
+const gapAlong = (n, ux, uy) => { const [ex, ey] = semi(n); return 1 / Math.sqrt((ux / ex) ** 2 + (uy / ey) ** 2) + 5; };
+const nodeXY = (n) => { const s = slotXY(n.p); const z = n.z || 0; return [OX + (s.x - s.y) * TW, OY + (s.x + s.y) * TH - z]; };
+
+const Scene = (() => {
+  let svg, eLayer, nLayer, lLayer, pLayer, L = null, els = {};
+  function init(host) {
+    svg = sv('svg', { viewBox: '-60 0 1020 520', class: 'scene', role: 'img', 'aria-label': 'Isometric 3D illustration of the lesson' });
+    svg.append(sv('defs', {}, sv('pattern', { id: 'floor', width: 88, height: 44, patternUnits: 'userSpaceOnUse', x: OX - 44, y: OY - 22 }, sv('path', { d: 'M0 22L44 0L88 22L44 44Z', class: 'gridline' }))));
+    svg.append(sv('rect', { x: -60, y: 0, width: 1020, height: 520, style: 'fill:url(#floor)' }));
+    eLayer = sv('g'); nLayer = sv('g'); lLayer = sv('g');
+    pLayer = sv('g'); svg.append(eLayer, nLayer, lLayer, pLayer); host.replaceChildren(svg);
+  }
+  function load(lesson) {
+    L = lesson; els = {}; pLayer.replaceChildren(); nLayer.replaceChildren(); eLayer.replaceChildren(); lLayer.replaceChildren();
+    const ids = Object.keys(L.nodes).sort((a, b) => { const A = L.nodes[a], B = L.nodes[b]; return (A.p[1] - B.p[1]) || ((A.z || 0) - (B.z || 0)) || (A.p[0] - B.p[0]); });
+    ids.forEach(id => {
+      const inner = sv('g', { class: 'in off' }), outer = sv('g', { class: 'n' }, inner);
+      outer.style.transform = 'translate(450px,262px)';
+      const linner = sv('g', { class: 'in off' }), louter = sv('g', { class: 'n' }, linner);
+      louter.style.transform = 'translate(450px,262px)';
+      nLayer.append(outer); pLayer.append(louter); els[id] = { outer, inner, louter, linner, key: '' };
+    });
+  }
+  function layoutLabels(items, lbls) {
+    const R = [];
+    items.forEach(it => R.push({ x: it.e.sx + it.pr.x, y: it.e.sy + it.pr.y, w: it.pr.w, h: it.pr.h, dy: 0, node: it.e }));
+    lbls.forEach(l => R.push({ x: l.cx - l.w / 2, y: l.cy - 12.5, w: l.w, h: 25, dy: 0, edge: l }));
+    for (let pass = 0; pass < 60; pass++) {
+      let moved = false;
+      for (let i = 0; i < R.length; i++) for (let j = i + 1; j < R.length; j++) {
+        const a = R[i], b = R[j];
+        const ox = Math.min(a.x + a.w, b.x + b.w) - Math.max(a.x, b.x), ay = a.y + a.dy, by = b.y + b.dy;
+        const oy = Math.min(ay + a.h, by + b.h) - Math.max(ay, by) + 3;
+        if (ox > -3 && oy > 0) { const d = oy / 2 + 1; if (ay <= by) { a.dy -= d; b.dy += d; } else { a.dy += d; b.dy -= d; } moved = true; }
+      }
+      R.forEach(r => { r.dy = Math.max(6 - r.y, Math.min(514 - r.y - r.h, r.dy)); });
+      if (!moved) break;
+    }
+    R.forEach(r => { if (r.node) r.node.louter.style.transform = `translate(${r.node.sx}px,${r.node.sy + r.dy}px)`; });
+    lbls.forEach(l => { const r = R.find(q => q.edge === l); const lg = sv('g', { transform: `translate(${l.cx},${l.cy + r.dy})` }); lg.append(pill(l.t, null, 0)); lLayer.append(lg); });
+  }
+  function apply(sc) {
+    const props = {}, items = [];
+    for (const id in L.nodes) {
+      const n = { ...L.nodes[id], ...(sc.over[id] || {}) }; props[id] = n;
+      const e = els[id], on = sc.on.has(id), key = JSON.stringify([n.k, n.w, n.d, n.h, n.r, n.c, n.t, n.s, n.g, DARK]);
+      if (key !== e.key) { e.key = key; const dn = drawNode(n); e.inner.replaceChildren(...dn.g.childNodes); const pg = dn.lab.childNodes[0], rc = pg && pg.firstChild; e.pr = rc ? { x: +rc.getAttribute('x'), y: +rc.getAttribute('y'), w: +rc.getAttribute('width'), h: +rc.getAttribute('height') } : null; e.linner.replaceChildren(...dn.lab.childNodes); }
+      const [sx, sy] = nodeXY(n);
+      e.outer.style.transform = `translate(${sx}px,${sy}px)`; e.louter.style.transform = `translate(${sx}px,${sy}px)`; e.sx = sx; e.sy = sy; if (on && e.pr) items.push({ e, pr: e.pr });
+      e.inner.classList.toggle('off', !on); e.linner.classList.toggle('off', !on);
+      e.outer.classList.toggle('hi', on && sc.hi.includes(id));
+      e.outer.classList.toggle('dim', on && !!n.dim);
+    }
+    eLayer.replaceChildren(); lLayer.replaceChildren();
+    const lbls = [];
+    for (const id of sc.edges) {
+      const ed = L.edges[id]; if (!ed) continue;
+      const na = props[ed.a], nb = props[ed.b]; if (!sc.on.has(ed.a) || !sc.on.has(ed.b)) continue;
+      const A = nodeXY(na), B = nodeXY(nb); A[1] -= anchorOf(na); B[1] -= anchorOf(nb);
+      const dx = B[0] - A[0], dy = B[1] - A[1], len = Math.hypot(dx, dy) || 1, ux = dx / len, uy = dy / len;
+      const g0 = gapAlong(na, ux, uy), g1 = gapAlong(nb, -ux, -uy);
+      if (len < g0 + g1 + 14) continue;
+      const P0 = [A[0] + ux * g0, A[1] + uy * g0], P1 = [B[0] - ux * g1, B[1] - uy * g1];
+      const bend = ed.bend || 0, M = [(P0[0] + P1[0]) / 2 - uy * bend, (P0[1] + P1[1]) / 2 + ux * bend];
+      const dpath = bend ? `M${P0[0]} ${P0[1]}Q${M[0]} ${M[1]} ${P1[0]} ${P1[1]}` : `M${P0[0]} ${P0[1]}L${P1[0]} ${P1[1]}`;
+      let tx = ux, ty = uy; if (bend) { const tl = Math.hypot(P1[0] - M[0], P1[1] - M[1]) || 1; tx = (P1[0] - M[0]) / tl; ty = (P1[1] - M[1]) / tl; }
+      const col = ed.c ? strokeOf(ed.c) : 'var(--ink)';
+      const eg = sv('g', { class: 'eg' });
+      eg.append(sv('path', { d: dpath, style: `stroke:${col};fill:none;${ed.dash ? 'stroke-dasharray:7 6' : ''}`, class: 'eg' }));
+      eg.append(sv('polygon', { points: `${P1[0]},${P1[1]} ${P1[0] - tx * 13 - ty * 6},${P1[1] - ty * 13 + tx * 6} ${P1[0] - tx * 13 + ty * 6},${P1[1] - ty * 13 - tx * 6}`, style: `fill:${col};stroke:${col};stroke-width:1;stroke-linejoin:round` }));
+      if (ed.pk) { const pk = sv('circle', { r: 7, class: 'face', style: 'fill:#ffcf4a' }, sv('animateMotion', { dur: (ed.dur || 1.8) + 's', repeatCount: 'indefinite', path: dpath })); eg.append(pk); }
+      eLayer.append(eg);
+      if (ed.t) lbls.push({ t: ed.t, cx: (P0[0] + 2 * M[0] + P1[0]) / 4 + (ed.lo ? ed.lo[0] : 0), cy: (P0[1] + 2 * M[1] + P1[1]) / 4 + (ed.lo ? ed.lo[1] : -18), w: Math.max(String(ed.t).length * 7.5, 0) + 20 });
+    }
+    layoutLabels(items, lbls);
+  }
+  const refresh = () => { for (const id in els) els[id].key = ''; };
+  return { init, load, apply, refresh };
+})();
+
+/* ===== lesson data helpers ===== */
+const LEVELS = [
+  { name: 'Start here', c: 'amber' }, { name: 'Core language', c: 'green' }, { name: 'Intermediate', c: 'purple' },
+  { name: 'Asynchronous', c: 'blue' }, { name: 'Browser', c: 'orange' }, { name: 'Advanced', c: 'pink' }
+];
+const LESSONS = [];
+const st = (tag, title, body, o = {}) => ({ tag, title, body: Array.isArray(body) ? body : [body], ...o });
+const lesson = (o) => LESSONS.push(o);
+</script>
+<script>
+lesson({
+  id: 'how-js-runs', lvl: 0, title: 'How JavaScript Runs', sub: 'Follow your code from plain text to something the computer executes.', min: 6, diff: 'Beginner',
+  learn: ['What a JavaScript engine is', 'Parse, AST, bytecode, JIT in order', 'Why a syntax error stops the whole file', 'Why types matter for speed'],
+  nodes: {
+    src: { k: 'cube', p: [-3.3, 0], c: 'amber', g: '</>', t: 'Your code', s: '.js text' },
+    parser: { k: 'cube', p: [-1.65, 0], c: 'blue', g: 'tok', t: 'Parser' },
+    ast: { k: 'cube', p: [0, 0], c: 'purple', g: 'AST', t: 'AST', s: 'code as a tree' },
+    interp: { k: 'cube', p: [1.65, 0], c: 'green', g: 'run', t: 'Interpreter', s: 'bytecode' },
+    jit: { k: 'hex', p: [3.3, 0], c: 'orange', g: 'JIT', t: 'JIT compiler', s: 'machine code', r: 40, h: 42 }
+  },
+  edges: {
+    e1: { a: 'src', b: 'parser', t: 'read', pk: true }, e2: { a: 'parser', b: 'ast', t: 'build' },
+    e3: { a: 'ast', b: 'interp', t: 'run', pk: true }, e4: { a: 'interp', b: 'jit', t: 'hot code', bend: 22, pk: true },
+    e5: { a: 'jit', b: 'interp', t: 'wrong guess', bend: 22, dash: true, c: 'red', lo: [0, 22] }
+  },
+  steps: [
+    st('PROBLEM', 'A computer cannot read JavaScript', ['Your file is only text.', 'An engine has to turn it into instructions first. Chrome and Node.js use one called V8.'], { add: ['src'], hi: ['src'], read: [['Stage', 'Text']], key: ['idea', 'JavaScript is not run straight from text. It is parsed, compiled to bytecode, then run.'], short: 'Plain text' }),
+    st('CONCEPT', 'Step 1: parse the text', ['The parser reads characters into tokens and checks the grammar.', 'A typo is caught here, before any line runs.'], { add: ['parser'], hi: ['parser'], e: ['e1'], read: [['Stage', 'Parsing']], code: 'let = 5;  // SyntaxError', key: ['warn', 'A SyntaxError stops the whole file, not just one line.'], short: 'Parse' }),
+    st('CONCEPT', 'Step 2: build a tree', ['The tokens become a tree called the AST. It records what is inside what and what calls what.', 'Tools like ESLint, Prettier and Babel all work on this tree.'], { add: ['ast'], hi: ['ast'], e: ['e1', 'e2'], read: [['Stage', 'AST']], short: 'AST' }),
+    st('CONCEPT', 'Step 3: run it', ['The interpreter turns the tree into bytecode and starts running right away.', 'Starting fast matters, so nothing is optimised yet.'], { add: ['interp'], hi: ['interp'], e: ['e2', 'e3'], read: [['Stage', 'Running']], short: 'Run' }),
+    st('TECHNIQUE', 'Speed up the hot parts', ['When a function runs many times, the engine marks it hot and compiles it to machine code.', 'That is why a loop can be slow at first and fast later.'], { add: ['jit'], hi: ['jit'], e: ['e3', 'e4'], read: [['Stage', 'Optimising']], key: ['know', 'You never call these stages yourself. The engine decides.'], short: 'JIT' }),
+    st('WATCH OUT', 'When a guess fails', ['Compiled code is built on guesses such as "this is always a number".', 'If a guess breaks, the engine throws the fast code away and falls back to the interpreter.'], { hi: ['jit', 'interp'], e: ['e4', 'e5'], read: [['Stage', 'Deoptimised']], key: ['warn', 'Keep a variable the same type to stay on the fast path.'], short: 'Deopt' }),
+    st('RECAP', 'The whole trip', ['Text, tokens, tree, bytecode, then machine code for the hot parts.', 'Now you know why syntax errors appear before anything runs, and why the first run is slower.'], { hi: [], e: ['e1', 'e2', 'e3', 'e4'], read: [['Stages', '5']], short: 'Recap' })
+  ]
+});
+
+lesson({
+  id: 'variables', lvl: 0, title: 'Variables: let, const, var', sub: 'A variable is a labelled box. Learn which boxes can change and where they live.', min: 7, diff: 'Beginner',
+  learn: ['What a variable is', 'When to use let and const', 'What const really locks', 'Block scope and why var leaks'],
+  nodes: {
+    age: { k: 'cube', p: [-3, 0], c: 'blue', g: '25', t: 'age', s: 'let' },
+    pi: { k: 'cube', p: [-0.3, 0], c: 'green', g: '3.14', t: 'PI', s: 'const' },
+    err: { k: 'cube', p: [2.4, -1.4], c: 'red', g: '!', t: 'TypeError', s: 'cannot reassign' },
+    user: { k: 'hex', p: [2.8, 1.5], c: 'green', g: '{ }', t: 'user', s: 'const · name: Asha', r: 38, h: 36 },
+    blk: { k: 'cube', p: [-1.9, 1.4], w: 3.2, d: 2.2, h: 6, c: 'gray' },
+    blkTag: { k: 'tag', p: [-1.9, 3.1], t: '{ block }' },
+    inLet: { k: 'cube', p: [-1.9, 1.4], z: 6, w: .8, d: .8, h: 22, c: 'blue', g: 'x', t: 'let x', s: 'stays inside' },
+    leak: { k: 'cube', p: [1.8, 1.4], w: .8, d: .8, h: 22, c: 'amber', g: 'y', t: 'var y', s: 'escapes the block' }
+  },
+  edges: {},
+  steps: [
+    st('CONCEPT', 'A variable is a labelled box', ['A variable gives a value a name so you can use it later.', '`let age = 25` makes a box called age with 25 inside.'], { add: ['age'], hi: ['age'], read: [['age', '25']], code: 'let age = 25;', short: 'The box' }),
+    st('TECHNIQUE', 'let: the value can change', ['You can put a new value in a let box at any time.'], { set: { age: { g: '26', s: 'let · reassigned' } }, hi: ['age'], read: [['age', '26']], code: 'age = 26;', key: ['know', 'Use let when the value will change.'], short: 'let' }),
+    st('TECHNIQUE', 'const: the name is locked', ['A const box cannot be reassigned. JavaScript throws an error if you try.'], { add: ['pi', 'err'], hi: ['pi', 'err'], code: 'const PI = 3.14;\nPI = 3;  // TypeError', key: ['idea', 'Use const by default. Switch to let only when you must.'], short: 'const' }),
+    st('WATCH OUT', 'const locks the name, not the contents', ['A const object can still change inside. Only the name is locked to the same object.'], { add: ['user'], set: { user: { s: 'const · name: Ravi' } }, hi: ['user'], code: "const user = { name: 'Asha' };\nuser.name = 'Ravi';  // allowed", key: ['warn', 'To stop changes inside, use Object.freeze.'], short: 'Contents' }),
+    st('CONCEPT', 'Scope: where a variable lives', ['let and const stay inside the block { } where they are declared.', 'Outside the block, x does not exist.'], { rm: ['age', 'pi', 'err', 'user'], add: ['blk', 'blkTag', 'inLet'], hi: ['inLet'], code: 'if (true) {\n  let x = 1;\n}\nconsole.log(x);  // ReferenceError', short: 'Scope' }),
+    st('WATCH OUT', 'var ignores blocks', ['var belongs to the whole function, so it leaks out of a block.', 'That is why modern code avoids it.'], { add: ['leak'], hi: ['leak'], code: 'if (true) { var y = 2; }\nconsole.log(y);  // 2', key: ['warn', 'Never use var in new code.'], short: 'var leaks' }),
+    st('RECAP', 'Pick the right keyword', ['const by default. let when the value changes. Never var.', 'Names are camelCase, constants can be UPPER_CASE.'], { hi: [], short: 'Recap' })
+  ]
+});
+
+lesson({
+  id: 'data-types', lvl: 0, title: 'Data Types', sub: 'Seven primitive types and one object type. Know them and typeof stops surprising you.', min: 6, diff: 'Beginner',
+  learn: ['The seven primitives', 'What counts as an object', 'The typeof null quirk', 'Why 0.1 + 0.2 is not 0.3'],
+  nodes: {
+    num: { k: 'cube', p: [-3.3, -1.5], c: 'amber', g: '42', t: 'number', s: 'ints and decimals' },
+    str: { k: 'cube', p: [-1.1, -1.5], c: 'teal', g: '"hi"', t: 'string', s: 'text' },
+    bool: { k: 'cube', p: [1.1, -1.5], c: 'green', g: 'T/F', t: 'boolean' },
+    und: { k: 'cube', p: [3.3, -1.5], c: 'gray', g: '?', t: 'undefined', s: 'no value yet' },
+    nul: { k: 'cube', p: [-3.3, 1.1], c: 'gray', g: 'null', t: 'null', s: 'empty on purpose' },
+    sym: { k: 'cube', p: [-1.1, 1.1], c: 'pink', g: 'Sym', t: 'symbol', s: 'unique id' },
+    big: { k: 'cube', p: [1.1, 1.1], c: 'orange', g: '10n', t: 'bigint', s: 'huge integers' },
+    obj: { k: 'hex', p: [3.3, 1.1], c: 'purple', g: '{ }', t: 'object', s: '{} [] fn Date', r: 38, h: 36 }
+  },
+  edges: {},
+  steps: [
+    st('CONCEPT', 'Three you use every day', ['numbers hold both integers and decimals. strings hold text. booleans are true or false.'], { add: ['num', 'str', 'bool'], hi: ['num', 'str', 'bool'], code: 'typeof 42;      // "number"\ntypeof "hi";    // "string"\ntypeof true;    // "boolean"', short: 'Everyday' }),
+    st('CONCEPT', 'Two kinds of nothing', ['undefined means "no value was given yet". null means "empty on purpose".', 'A declared variable with no value is undefined.'], { add: ['und', 'nul'], hi: ['und', 'nul'], code: 'let x;          // undefined\nlet y = null;   // chosen empty', short: 'Nothing' }),
+    st('CONCEPT', 'Two special ones', ['symbol makes a guaranteed-unique key. bigint holds integers beyond 9 quadrillion.'], { add: ['sym', 'big'], hi: ['sym', 'big'], code: 'Symbol("id") === Symbol("id");  // false\n9007199254740993n;               // bigint', short: 'Special' }),
+    st('CONCEPT', 'Everything else is an object', ['Objects, arrays, functions, dates and maps are all objects. Primitives are copied by value. Objects are shared by reference.'], { add: ['obj'], hi: ['obj'], key: ['idea', 'Primitives are immutable values. Objects are things that can change.'], short: 'Objects' }),
+    st('WATCH OUT', 'The typeof null bug', ['typeof null says "object". This is a 1995 mistake that can never be fixed without breaking the web.'], { set: { nul: { t: 'typeof → "object"', s: 'a famous bug', c: 'red' } }, hi: ['nul'], code: 'typeof null;  // "object"  (wrong!)\nvalue === null;  // the right check', key: ['warn', 'Check for null with ===, never with typeof.'], short: 'null bug' }),
+    st('WATCH OUT', 'Numbers are floating point', ['All numbers are 64-bit decimals, so some sums are slightly off.', 'Round when you display, and use integers (cents) for money.'], { set: { num: { g: '0.3?', s: '0.1 + 0.2' } }, hi: ['num'], code: '0.1 + 0.2;  // 0.30000000000000004\n(0.1 + 0.2).toFixed(2);  // "0.30"', short: '0.1 + 0.2' }),
+    st('RECAP', 'Seven plus one', ['Primitives: number, string, boolean, undefined, null, symbol, bigint. Then object for everything else.'], { hi: [], short: 'Recap' })
+  ]
+});
+
+lesson({
+  id: 'value-vs-reference', lvl: 1, title: 'Value vs Reference', sub: 'Why copying a number is safe but copying an object is not.', min: 6, diff: 'Beginner',
+  learn: ['Primitives are copied by value', 'Objects are shared by reference', 'Why a change shows up through both names', 'Why {} === {} is false'],
+  nodes: {
+    a: { k: 'cube', p: [-3.6, -1.2], c: 'blue', g: '5', t: 'a', s: 'primitive' },
+    b: { k: 'cube', p: [-2, -1.2], c: 'blue', g: '5', t: 'b', s: 'copy of a' },
+    x: { k: 'cube', p: [-3.6, 1.3], c: 'teal', g: '→', t: 'x', s: 'arrow' },
+    y: { k: 'cube', p: [-2, 1.3], c: 'teal', g: '→', t: 'y', s: 'arrow' },
+    obj: { k: 'hex', p: [2.4, 0.4], c: 'purple', g: '{ }', t: 'object', s: 'n: 1', r: 42, h: 40 }
+  },
+  edges: {
+    ab: { a: 'a', b: 'b', t: 'copy', pk: true }, ex: { a: 'x', b: 'obj', t: 'points to', pk: true }, ey: { a: 'y', b: 'obj', t: 'points to', bend: -26, pk: true }
+  },
+  steps: [
+    st('CONCEPT', 'A primitive lives inside the variable', ['The number 5 is stored right in the box called a.'], { add: ['a'], hi: ['a'], read: [['a', '5']], code: 'let a = 5;', short: 'Primitive' }),
+    st('TECHNIQUE', 'Copying makes a second value', ['let b = a copies the value. b gets its own 5.'], { add: ['b'], e: ['ab'], hi: ['b'], read: [['a', '5'], ['b', '5']], code: 'let b = a;', short: 'Copy' }),
+    st('TECHNIQUE', 'Changing b does not touch a', ['They are two separate boxes now.'], { set: { b: { g: '10', s: 'changed' } }, e: [], hi: ['b'], read: [['a', '5'], ['b', '10']], code: 'b = 10;\nconsole.log(a);  // 5', key: ['know', 'Strings, numbers, booleans behave like this.'], short: 'Independent' }),
+    st('CONCEPT', 'An object lives elsewhere', ['The object sits in a separate memory area (the heap). The variable only holds an arrow to it.'], { rm: ['a', 'b'], add: ['obj', 'x'], e: ['ex'], hi: ['obj', 'x'], read: [['x', 'arrow']], code: 'const x = { n: 1 };', short: 'Object' }),
+    st('TECHNIQUE', 'Copying copies the arrow', ['const y = x does not copy the object. It copies the arrow, so both names point at one object.'], { add: ['y'], e: ['ex', 'ey'], hi: ['y'], code: 'const y = x;', short: 'Two names' }),
+    st('WATCH OUT', 'Change it through one name', ['The change shows up through both names, because there is only one object.'], { set: { obj: { s: 'n: 99' } }, hi: ['obj'], read: [['x.n', '99'], ['y.n', '99']], code: 'y.n = 99;\nconsole.log(x.n);  // 99', key: ['warn', 'To really copy, use { ...x } or structuredClone(x).'], short: 'Shared' }),
+    st('RECAP', 'Compare arrows, not contents', ['=== on objects asks "is it the same object?". Two separate objects with equal contents are not equal.'], { hi: [], code: '{ n: 1 } === { n: 1 };  // false\nx === y;                // true', short: 'Recap' })
+  ]
+});
+
+lesson({
+  id: 'truthy-falsy', lvl: 1, title: 'Truthy and Falsy', sub: 'Every value acts as true or false in a condition. Only eight are false.', min: 5, diff: 'Beginner',
+  learn: ['The eight falsy values', 'Surprising truthy values', '|| versus ??'],
+  nodes: {
+    gate: { k: 'hex', p: [0, -1.9], c: 'amber', g: '?', t: 'if (value)', s: 'true or false?', r: 38, h: 34 },
+    slabF: { k: 'cube', p: [-2.4, 1.3], w: 3.6, d: 2.4, h: 6, c: 'red' },
+    slabT: { k: 'cube', p: [2.5, 1.3], w: 3.6, d: 2.4, h: 6, c: 'green' },
+    tagF: { k: 'tag', p: [-2.4, 3.1], t: 'falsy: exactly 8', c: 'red' },
+    tagT: { k: 'tag', p: [2.5, 3.1], t: 'truthy: everything else' },
+    f1: { k: 'tag', p: [-3.65, 0.75], z: 8, t: 'false' }, f2: { k: 'tag', p: [-2.75, 0.75], z: 8, t: '0' }, f3: { k: 'tag', p: [-1.95, 0.75], z: 8, t: '-0' }, f4: { k: 'tag', p: [-1.2, 0.75], z: 8, t: '0n' },
+    f5: { k: 'tag', p: [-3.65, 1.75], z: 8, t: '""' }, f6: { k: 'tag', p: [-2.85, 1.75], z: 8, t: 'null' }, f7: { k: 'tag', p: [-1.85, 1.75], z: 8, t: 'undefined' }, f8: { k: 'tag', p: [-0.8, 1.75], z: 8, t: 'NaN' },
+    t1: { k: 'tag', p: [1.4, 0.75], z: 8, t: '"0"' }, t2: { k: 'tag', p: [2.3, 0.75], z: 8, t: '"false"' }, t3: { k: 'tag', p: [3.4, 0.75], z: 8, t: '[]' },
+    t4: { k: 'tag', p: [1.4, 1.75], z: 8, t: '{}' }, t5: { k: 'tag', p: [2.3, 1.75], z: 8, t: '-1' }, t6: { k: 'tag', p: [3.4, 1.75], z: 8, t: 'Infinity' }
+  },
+  edges: {},
+  steps: [
+    st('CONCEPT', 'A condition turns any value into true or false', ['if, while, && and || all ask "is this value true or false?".', 'JavaScript converts the value for you.'], { add: ['gate'], hi: ['gate'], code: 'if (value) { /* runs when truthy */ }', short: 'The gate' }),
+    st('TECHNIQUE', 'Eight values are falsy', ['These eight turn into false. Memorise them.'], { add: ['slabF', 'tagF', 'f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8'], hi: ['slabF'], key: ['idea', 'False, zero, empty string, null, undefined and NaN are the ones you meet daily.'], short: 'Falsy' }),
+    st('TECHNIQUE', 'Everything else is truthy', ['That includes things that feel empty or false.'], { add: ['slabT', 'tagT', 't1', 't2', 't3', 't4', 't5', 't6'], hi: ['slabT'], short: 'Truthy' }),
+    st('WATCH OUT', 'Surprising truthy values', ['The string "0", the string "false", an empty array and an empty object are all truthy.'], { hi: ['t1', 't2', 't3', 't4'], code: 'if ([]) console.log("runs!");\nBoolean("0");  // true', key: ['warn', 'Check array length with arr.length, not just arr.'], short: 'Surprises' }),
+    st('TECHNIQUE', '|| versus ??', ['|| falls back on any falsy value, even 0. ?? falls back only on null and undefined.'], { set: { gate: { t: 'a ?? b', s: 'only null / undefined' } }, hi: ['f2', 'gate'], code: '0 || 10;  // 10  (0 is falsy)\n0 ?? 10;  // 0   (0 is a real value)', key: ['know', 'Use ?? for defaults when 0 or "" are valid.'], short: '|| vs ??' })
+  ]
+});
+
+lesson({
+  id: 'coercion', lvl: 1, title: 'Coercion and Equality', sub: 'JavaScript converts types on the fly. See what + , - , == and === really do.', min: 5, diff: 'Beginner',
+  learn: ['Why "5" + 3 is "53"', 'Why "5" - 3 is 2', '== versus ===', 'How to convert on purpose'],
+  nodes: {
+    ex1: { k: 'cube', p: [-2.6, -1.9], h: 24, c: 'amber', g: '+', t: "'5' + 3" },
+    ex2: { k: 'cube', p: [-2.6, 0.2], h: 24, c: 'amber', g: '-', t: "'5' - 3" },
+    ex3: { k: 'cube', p: [-2.6, 2.3], h: 24, c: 'amber', g: '?', t: 'null == undefined' },
+    r1: { k: 'orb', p: [2.6, -1.9], c: 'green', t: "'53'" },
+    r2: { k: 'orb', p: [2.6, 0.2], c: 'green', t: '2' },
+    r3: { k: 'orb', p: [2.6, 2.3], c: 'green', t: 'true' }
+  },
+  edges: { q1: { a: 'ex1', b: 'r1', pk: true }, q2: { a: 'ex2', b: 'r2', pk: true }, q3: { a: 'ex3', b: 'r3', pk: true } },
+  steps: [
+    st('CONCEPT', '+ with a string joins text', ['If either side is a string, + glues them together. The 3 becomes "3".'], { add: ['ex1', 'r1'], e: ['q1'], hi: ['ex1'], read: [['Result', "'53'"]], code: "'5' + 3;  // '53'", short: '+' }),
+    st('CONCEPT', '- always means maths', ['Minus has no text meaning, so both sides turn into numbers.'], { add: ['ex2', 'r2'], e: ['q1', 'q2'], hi: ['ex2'], read: [['Result', '2']], code: "'5' - 3;  // 2\n'5' * '2'; // 10", short: '-' }),
+    st('TECHNIQUE', '== converts, === does not', ['Double equals converts types first. Triple equals compares type and value.'], { set: { ex1: { t: "5 == '5'", g: '==' }, r1: { t: 'true', c: 'green' }, ex2: { t: "5 === '5'", g: '===' }, r2: { t: 'false', c: 'red' } }, hi: ['ex1', 'ex2'], read: [['==', 'true'], ['===', 'false']], key: ['idea', 'Always use ===.'], short: '== vs ===' }),
+    st('WATCH OUT', 'Odd corners to know', ['NaN is not equal to anything, even itself. null == undefined is true, but null === undefined is false.'], { set: { ex1: { t: 'NaN === NaN', g: '!=' }, r1: { t: 'false', c: 'red' }, ex2: { t: 'null === undefined', g: '===' }, r2: { t: 'false', c: 'red' } }, add: ['ex3', 'r3'], e: ['q1', 'q2', 'q3'], hi: ['ex1'], code: 'Number.isNaN(NaN);  // true', short: 'Odd cases' }),
+    st('RECAP', 'Convert on purpose', ['Use Number("42"), String(42) and Boolean(x). Use === for comparisons.', 'Then no surprise conversions can happen.'], { hi: [], code: 'Number("42");   // 42\nNumber("abc");  // NaN', short: 'Recap' })
+  ]
+});
+
+lesson({
+  id: 'functions', lvl: 1, title: 'Functions', sub: 'Reusable recipes. Call them, get a value back, and even pass them around.', min: 7, diff: 'Beginner',
+  learn: ['Declare, call and return', 'Arrow functions', 'Functions are values', 'Callbacks and higher-order functions'],
+  nodes: {
+    main: { k: 'cube', p: [-3.4, 0], c: 'blue', g: 'main', t: 'caller' },
+    fn: { k: 'hex', p: [0, 0], c: 'amber', g: 'fn', t: 'add(a, b)', s: 'function', r: 40, h: 40 },
+    res: { k: 'orb', p: [3.4, 0], c: 'green', t: '5', s: 'returned' },
+    arrow: { k: 'cube', p: [-2.2, 2.7], c: 'teal', g: '=>', t: 'const add = (a, b) => a + b', h: 26 },
+    hof: { k: 'hex', p: [2.6, 2.7], c: 'purple', g: 'fn', t: 'run(callback)', s: 'takes a function', r: 36, h: 32 }
+  },
+  edges: {
+    call: { a: 'main', b: 'fn', t: 'add(2, 3)', pk: true }, ret: { a: 'fn', b: 'res', t: 'return a + b', pk: true },
+    pass: { a: 'arrow', b: 'hof', t: 'passed in', pk: true }
+  },
+  steps: [
+    st('CONCEPT', 'A function is a reusable recipe', ['Write the steps once, run them as often as you like with different inputs.'], { add: ['fn'], hi: ['fn'], code: 'function add(a, b) {\n  return a + b;\n}', short: 'Declare' }),
+    st('TECHNIQUE', 'Call it with arguments', ['The caller hands in 2 and 3. They become a and b inside.'], { add: ['main'], e: ['call'], hi: ['main'], read: [['a', '2'], ['b', '3']], code: 'add(2, 3);', short: 'Call' }),
+    st('TECHNIQUE', 'return hands a value back', ['return ends the function and gives the caller a result. Without return you get undefined.'], { add: ['res'], e: ['call', 'ret'], hi: ['res'], read: [['Result', '5']], key: ['know', 'Code after return never runs.'], short: 'Return' }),
+    st('TECHNIQUE', 'Arrow functions are shorter', ['The arrow form is the same recipe in a compact style. It also has no this of its own.'], { add: ['arrow'], e: [], hi: ['arrow'], code: 'const add = (a, b) => a + b;\nconst sq = n => n * n;', short: 'Arrow' }),
+    st('CONCEPT', 'Functions are values', ['You can store a function in a variable and pass it to another function. That is a callback.'], { add: ['hof'], e: ['pass'], hi: ['hof'], code: 'run(() => console.log("hi"));', key: ['idea', 'A function that takes or returns a function is a higher-order function. map and filter are examples.'], short: 'Callbacks' }),
+    st('RECAP', 'Remember', ['Parameters can have defaults and a rest: add(a = 0, ...more).', 'Arrow functions suit callbacks. Normal functions suit methods and constructors.'], { hi: [], short: 'Recap' })
+  ]
+});
+
+lesson({
+  id: 'array-methods', lvl: 1, title: 'Array Methods', sub: 'map, filter, reduce, find: watch each method turn an input array into a result.', min: 8, diff: 'Beginner',
+  learn: ['What map does', 'What filter keeps', 'How reduce folds to one value', 'find, some, every, and chaining'],
+  nodes: {
+    n1: { k: 'cube', p: [-3.2, -2], h: 24, c: 'amber', g: '1' }, n2: { k: 'cube', p: [-1.6, -2], h: 24, c: 'amber', g: '2' }, n3: { k: 'cube', p: [0, -2], h: 24, c: 'amber', g: '3' },
+    n4: { k: 'cube', p: [1.6, -2], h: 24, c: 'amber', g: '4' }, n5: { k: 'cube', p: [3.2, -2], h: 24, c: 'amber', g: '5' },
+    mach: { k: 'hex', p: [0, 0.1], c: 'purple', g: 'ƒ', t: 'map(n => n * 2)', r: 40, h: 36 },
+    o1: { k: 'cube', p: [-3.2, 2.4], h: 24, c: 'green', g: '2' }, o2: { k: 'cube', p: [-1.6, 2.4], h: 24, c: 'green', g: '4' }, o3: { k: 'cube', p: [0, 2.4], h: 24, c: 'green', g: '6' },
+    o4: { k: 'cube', p: [1.6, 2.4], h: 24, c: 'green', g: '8' }, o5: { k: 'cube', p: [3.2, 2.4], h: 24, c: 'green', g: '10' },
+    sum: { k: 'cube', p: [0, 2.4], h: 30, c: 'green', g: '15', t: 'one value' },
+    found: { k: 'orb', p: [0, 2.4], c: 'green', g: '4', t: 'first match' }
+  },
+  edges: { ein: { a: 'n3', b: 'mach', pk: true }, eout: { a: 'mach', b: 'o3', pk: true }, eone: { a: 'mach', b: 'sum', pk: true } },
+  steps: [
+    st('CONCEPT', 'Start with an array', ['An array is an ordered list. Methods like map and filter take it, do a job, and give a new result.'], { add: ['n1', 'n2', 'n3', 'n4', 'n5'], hi: ['n1', 'n2', 'n3', 'n4', 'n5'], read: [['nums', '[1, 2, 3, 4, 5]']], code: 'const nums = [1, 2, 3, 4, 5];', short: 'Input' }),
+    st('TECHNIQUE', 'map: change every item', ['map runs your function on each item and collects the results. The new array has the same length.'], { add: ['mach', 'o1', 'o2', 'o3', 'o4', 'o5'], e: ['ein', 'eout'], hi: ['mach'], read: [['Result', '[2, 4, 6, 8, 10]']], code: 'nums.map(n => n * 2);', short: 'map' }),
+    st('TECHNIQUE', 'filter: keep some items', ['filter keeps the items where your function returns true. The result can be shorter.'], { set: { mach: { t: 'filter(n => n % 2 === 0)' }, n1: { dim: true }, n3: { dim: true }, n5: { dim: true }, o1: { g: '2' }, o2: { g: '4' } }, rm: ['o3', 'o4', 'o5'], e: ['ein'], hi: ['mach'], read: [['Result', '[2, 4]']], code: 'nums.filter(n => n % 2 === 0);', short: 'filter' }),
+    st('TECHNIQUE', 'reduce: fold into one value', ['reduce carries a running total through the array and ends with a single value.'], { set: { mach: { t: 'reduce((sum, n) => sum + n, 0)' }, n1: { dim: false }, n3: { dim: false }, n5: { dim: false } }, rm: ['o1', 'o2'], add: ['sum'], e: ['ein', 'eone'], hi: ['sum'], read: [['Result', '15']], code: 'nums.reduce((sum, n) => sum + n, 0);', key: ['idea', 'reduce can build anything: a sum, an object, a grouped map.'], short: 'reduce' }),
+    st('TECHNIQUE', 'find, some, every', ['find returns the first match. some asks "is there any?". every asks "are all of them?".'], { set: { mach: { t: 'find(n => n > 3)' }, n1: { dim: true }, n2: { dim: true }, n3: { dim: true }, n5: { dim: true } }, rm: ['sum'], add: ['found'], e: ['ein'], hi: ['n4', 'found'], read: [['Result', '4']], code: 'nums.find(n => n > 3);    // 4\nnums.some(n => n > 4);    // true\nnums.every(n => n > 0);   // true', short: 'find' }),
+    st('WATCH OUT', 'Chain them, never mutate', ['Methods return new arrays, so you can chain them. They do not change the original.'], { set: { mach: { t: 'filter().map().reduce()' }, n1: { dim: false }, n2: { dim: false }, n3: { dim: false }, n5: { dim: false }, sum: { g: '12' } }, rm: ['found'], add: ['sum'], e: ['ein', 'eone'], hi: ['sum'], read: [['nums', 'unchanged'], ['Result', '12']], code: 'nums.filter(n => n % 2 === 0)\n    .map(n => n * 2)\n    .reduce((s, n) => s + n, 0);  // 12', key: ['warn', 'push, pop, splice, sort and reverse DO change the array. Prefer the others.'], short: 'Chain' })
+  ]
+});
+
+lesson({
+  id: 'objects-spread', lvl: 1, title: 'Objects, Destructuring and Spread', sub: 'Unpack objects, copy them, and learn why spread only copies one level deep.', min: 7, diff: 'Beginner',
+  learn: ['Destructuring syntax', 'Copying with spread', 'Why the copy is shallow', 'Deep copy with structuredClone'],
+  nodes: {
+    user: { k: 'cube', p: [-3, 0.2], c: 'amber', g: '{ }', t: 'user', s: 'name, age, address' },
+    nm: { k: 'orb', p: [-1.4, -2], c: 'teal', t: "name = 'Asha'" }, ag: { k: 'orb', p: [-3.4, -2.3], c: 'teal', t: 'age = 25' },
+    copy: { k: 'cube', p: [1, -1.1], c: 'blue', g: '{ }', t: 'copy', s: '{ ...user }' },
+    addr: { k: 'hex', p: [-0.3, 2], c: 'purple', g: '{ }', t: 'address', s: 'city: Pune', r: 36, h: 32 },
+    clone: { k: 'cube', p: [3.4, 0.3], c: 'green', g: '{ }', t: 'clone', s: 'structuredClone' },
+    addr2: { k: 'hex', p: [3.4, 2.6], c: 'purple', g: '{ }', t: 'address (own)', s: 'city: Pune', r: 36, h: 32 }
+  },
+  edges: {
+    d1: { a: 'user', b: 'nm', t: '{ name }', pk: true }, d2: { a: 'user', b: 'ag', t: '{ age }', pk: true },
+    sp: { a: 'user', b: 'copy', t: 'spread', pk: true }, pu: { a: 'user', b: 'addr', t: 'points to' }, pc: { a: 'copy', b: 'addr', t: 'same one!', c: 'red', dash: true },
+    sc: { a: 'user', b: 'clone', t: 'deep copy', bend: 30, pk: true }, pc2: { a: 'clone', b: 'addr2', t: 'own copy' }
+  },
+  steps: [
+    st('CONCEPT', 'An object holds named values', ['Keys on the left, values on the right. Read with a dot or brackets.'], { add: ['user'], hi: ['user'], code: "const user = {\n  name: 'Asha', age: 25,\n  address: { city: 'Pune' }\n};", short: 'Object' }),
+    st('TECHNIQUE', 'Destructuring pulls values out', ['One line creates several variables from an object. Arrays work too, by position.'], { add: ['nm', 'ag'], e: ['d1', 'd2'], hi: ['nm', 'ag'], code: 'const { name, age } = user;\nconst [first, second] = [10, 20];', key: ['know', 'You can rename and default: { name: n = "x" }.'], short: 'Destructure' }),
+    st('TECHNIQUE', 'Spread makes a copy', ['{ ...user } copies each key into a new object. Put overrides after the spread.'], { rm: ['nm', 'ag'], add: ['copy'], e: ['sp'], hi: ['copy'], code: 'const copy = { ...user, age: 26 };\nconst more = [...arr, 4];', short: 'Spread' }),
+    st('WATCH OUT', 'The copy is shallow', ['Spread copies one level. The nested address is not copied. Both objects still share it.'], { add: ['addr'], e: ['sp', 'pu', 'pc'], hi: ['addr'], code: "copy.address.city = 'Delhi';\nuser.address.city;  // 'Delhi' !", key: ['warn', 'This is a classic React bug: mutating nested state.'], short: 'Shallow' }),
+    st('TECHNIQUE', 'structuredClone copies everything', ['structuredClone makes a real deep copy, including nested objects, dates, maps and sets.'], { rm: ['copy'], add: ['clone', 'addr2'], e: ['pu', 'sc', 'pc2'], hi: ['clone', 'addr2'], code: 'const deep = structuredClone(user);', key: ['know', 'It cannot copy functions. JSON.parse(JSON.stringify()) drops dates and undefined.'], short: 'Deep copy' }),
+    st('RECAP', 'Remember', ['Destructure to unpack. Spread to copy one level. structuredClone to copy fully.'], { hi: [], short: 'Recap' })
+  ]
+});
+lesson({
+  id: 'scope-chain', lvl: 2, title: 'Scope and Hoisting', sub: 'Where a variable can be seen, and how JavaScript looks it up.', min: 7, diff: 'Intermediate',
+  learn: ['Global, function and block scope', 'The scope chain lookup', 'Hoisting', 'The temporal dead zone'],
+  nodes: {
+    glob: { k: 'cube', p: [-1.2, -0.6], w: 5.6, d: 4.4, h: 6, c: 'gray' },
+    gt: { k: 'tag', p: [-1.2, -3.2], t: 'Global scope', s: 'const a = 1' },
+    fn: { k: 'cube', p: [-1.2, -0.4], z: 6, w: 3.6, d: 2.8, h: 6, c: 'blue' },
+    ft: { k: 'tag', p: [-1.2, -2.0], z: 6, t: 'Function scope', s: 'const b = 2' },
+    blk: { k: 'cube', p: [-1.2, -0.3], z: 12, w: 1.8, d: 1.4, h: 6, c: 'green' },
+    bt: { k: 'tag', p: [-1.2, -1.2], z: 12, t: 'Block scope', s: 'let c = 3' },
+    look: { k: 'orb', p: [-1.2, -0.3], z: 20, c: 'amber', t: 'looking for a' },
+    hoist: { k: 'cube', p: [3.4, 0.4], c: 'orange', g: 'var', t: 'hoisted', s: 'undefined until set' },
+    tdz: { k: 'cube', p: [3.4, 2.3], c: 'red', g: 'TDZ', t: 'let before line', s: 'ReferenceError' }
+  },
+  edges: {},
+  steps: [
+    st('CONCEPT', 'Scope is a set of nested rooms', ['The outer room is global. Each function adds a room inside it. Each block adds a smaller one.'], { add: ['glob', 'gt', 'fn', 'ft', 'blk', 'bt'], hi: ['glob', 'fn', 'blk'], short: 'Rooms' }),
+    st('TECHNIQUE', 'Inner can see outer, never the reverse', ['Code in the block can read c, b and a. Code at global level cannot read c.'], { hi: ['blk'], read: [['sees', 'c, b, a']], key: ['idea', 'Visibility goes outward only.'], short: 'Visibility' }),
+    st('TECHNIQUE', 'The scope chain lookup', ['To find a name, JavaScript checks the current room, then the next one out, until it finds it or runs out.'], { add: ['look'], hi: ['look'], set: { look: { z: 20 } }, code: 'const a = 1;\nfunction f() {\n  const b = 2;\n  { let c = 3; console.log(a); }\n}', short: 'Lookup' }),
+    st('TECHNIQUE', 'Shadowing', ['An inner name can hide an outer one with the same name. The inner one wins inside its room.'], { hi: ['bt'], code: 'let x = 1;\n{ let x = 2; console.log(x); }  // 2', short: 'Shadow' }),
+    st('CONCEPT', 'Hoisting moves declarations up', ['Before running, JavaScript reserves names. var is reserved and set to undefined. Function declarations are fully ready.'], { add: ['hoist'], hi: ['hoist'], code: 'console.log(v);  // undefined\nvar v = 5;\nsay();           // works\nfunction say() {}', short: 'Hoist' }),
+    st('WATCH OUT', 'The temporal dead zone', ['let and const are reserved too, but unusable until their line runs. Touching them early throws.'], { add: ['tdz'], hi: ['tdz'], code: 'console.log(n);  // ReferenceError\nlet n = 5;', key: ['warn', 'Declare variables at the top of their scope.'], short: 'TDZ' }),
+    st('RECAP', 'Remember', ['Names are found by walking outward. var hoists as undefined, let and const hoist into a dead zone.'], { hi: [], short: 'Recap' })
+  ]
+});
+
+lesson({
+  id: 'closures', lvl: 2, title: 'Closures', sub: 'A function that remembers the variables around it, even after they should be gone.', min: 7, diff: 'Intermediate',
+  learn: ['What a closure is', 'Private state', 'One closure per call', 'The classic loop bug'],
+  nodes: {
+    outer: { k: 'cube', p: [-3, 0], w: 2.4, d: 2.4, h: 6, c: 'blue' },
+    ot: { k: 'tag', p: [-3, -1.9], t: 'makeCounter()', s: 'function runs, then ends' },
+    cnt: { k: 'cube', p: [-3, 0], z: 6, w: .9, d: .9, h: 24, c: 'amber', g: '0', t: 'count' },
+    inner: { k: 'hex', p: [1.2, -0.2], c: 'green', g: 'fn', t: 'counter', s: 'returned function', r: 38, h: 36 },
+    back: { k: 'cube', p: [2.6, 2.4], c: 'amber', g: '0', t: 'count (kept alive)', h: 24 },
+    c2: { k: 'cube', p: [-0.2, 2.4], c: 'purple', g: '0', t: 'second counter', s: 'own count', h: 24 },
+    loop: { k: 'cube', p: [-3.4, 2.6], c: 'red', g: '3 3 3', t: 'var in a loop', s: 'one shared i' }
+  },
+  edges: { ret: { a: 'outer', b: 'inner', t: 'returns', pk: true }, mem: { a: 'inner', b: 'back', t: 'remembers', pk: true } },
+  steps: [
+    st('PROBLEM', 'Variables normally vanish', ['When a function ends, its local variables are normally thrown away.'], { add: ['outer', 'ot', 'cnt'], hi: ['cnt'], code: 'function makeCounter() {\n  let count = 0;\n  return () => ++count;\n}', short: 'Problem' }),
+    st('CONCEPT', 'The inner function keeps them', ['The returned function still uses count, so JavaScript keeps count alive for it.'], { add: ['inner'], e: ['ret'], hi: ['inner'], short: 'Return' }),
+    st('CONCEPT', 'That is a closure', ['A closure is a function plus the variables it remembers from where it was created.'], { rm: ['outer', 'ot', 'cnt'], add: ['back'], e: ['mem'], hi: ['back'], code: 'const counter = makeCounter();\ncounter();  // 1\ncounter();  // 2', key: ['idea', 'No one else can touch count. That is private state.'], short: 'Closure' }),
+    st('TECHNIQUE', 'Each call makes a fresh one', ['A second makeCounter() call gets its own separate count.'], { add: ['c2'], hi: ['c2'], code: 'const other = makeCounter();\nother();  // 1  (not 3)', short: 'Independent' }),
+    st('WATCH OUT', 'The classic var-in-loop bug', ['var makes one shared i. Every callback sees the final value. let makes a new i each turn.'], { add: ['loop'], hi: ['loop'], code: 'for (var i = 0; i < 3; i++)\n  setTimeout(() => console.log(i));  // 3 3 3\n// use let and you get 0 1 2', key: ['warn', 'This is the most asked closure interview question.'], short: 'Loop bug' }),
+    st('RECAP', 'Where you use them', ['Counters, private data, once(), memoize, debounce, and React hooks all rely on closures.'], { hi: [], short: 'Recap' })
+  ]
+});
+
+lesson({
+  id: 'this-keyword', lvl: 2, title: 'The this Keyword', sub: 'this is decided by how a function is called, not where it is written.', min: 7, diff: 'Intermediate',
+  learn: ['The four calling rules', 'Why a method loses this', 'Arrow functions and this', 'call, apply, bind'],
+  nodes: {
+    obj: { k: 'cube', p: [-3, -0.5], c: 'amber', g: '{ }', t: 'user', s: 'name: Asha' },
+    fn: { k: 'hex', p: [0.6, -0.5], c: 'blue', g: 'fn', t: 'greet()', s: 'uses this', r: 38, h: 36 },
+    th: { k: 'orb', p: [3.6, -0.5], c: 'green', t: 'this = ?' },
+    lost: { k: 'cube', p: [-3, 2.4], c: 'red', g: 'undef', t: 'detached', s: 'this is lost' },
+    arr: { k: 'cube', p: [0.6, 2.6], c: 'teal', g: '=>', t: 'arrow', s: 'uses outer this' },
+    bd: { k: 'cube', p: [3.6, 2.6], c: 'purple', g: 'bind', t: 'bind(user)', s: 'fixed this' }
+  },
+  edges: { c1: { a: 'obj', b: 'fn', t: 'user.greet()', pk: true }, c2: { a: 'fn', b: 'th', t: 'left of the dot', pk: true } },
+  steps: [
+    st('CONCEPT', 'this is a hidden argument', ['Every normal function receives a this. Who it points to depends on the call.'], { add: ['fn'], hi: ['fn'], short: 'Idea' }),
+    st('TECHNIQUE', 'Rule 1: the object before the dot', ['In user.greet(), this is whatever is left of the dot.'], { add: ['obj', 'th'], e: ['c1', 'c2'], set: { th: { t: 'this = user', c: 'green' } }, hi: ['th'], code: "const user = { name: 'Asha',\n  greet() { return this.name; } };\nuser.greet();  // 'Asha'", short: 'Dot' }),
+    st('WATCH OUT', 'Rule 2: a bare call loses it', ['Copy the method into a variable and call it alone. There is no dot, so this is lost.'], { rm: ['obj'], e: [], set: { th: { t: 'this = undefined', c: 'red' } }, add: ['lost'], hi: ['lost'], code: 'const g = user.greet;\ng();  // undefined or error', key: ['warn', 'This breaks React class handlers and setTimeout callbacks.'], short: 'Lost' }),
+    st('TECHNIQUE', 'Rule 3: you choose it', ['call, apply and bind let you set this by hand. bind returns a new function with this fixed.'], { add: ['bd'], hi: ['bd'], code: 'g.call(user);\nconst bound = g.bind(user);\nbound();  // "Asha"', short: 'bind' }),
+    st('TECHNIQUE', 'Rule 4: arrows use the outer this', ['Arrow functions have no this of their own. They borrow it from where they were written.'], { add: ['arr'], set: { th: { t: 'this = outer', c: 'teal' } }, hi: ['arr'], code: 'greet() {\n  setTimeout(() => this.name, 100);  // works\n}', key: ['idea', 'Use arrows inside methods. Do not use them as methods.'], short: 'Arrow' }),
+    st('RECAP', 'Ask one question', ['Look at the call. Dot before it? That object. new? The new object. call/bind? What you gave. Otherwise undefined.'], { hi: [], short: 'Recap' })
+  ]
+});
+
+lesson({
+  id: 'prototypes', lvl: 2, title: 'Prototypes and Classes', sub: 'Objects inherit by following a chain of links. class is a tidy way to write it.', min: 8, diff: 'Intermediate',
+  learn: ['What a prototype is', 'The lookup chain', 'class and extends', 'super and instanceof'],
+  nodes: {
+    dog: { k: 'cube', p: [-3.4, 0], c: 'amber', g: '{ }', t: 'rex', s: 'name: Rex' },
+    dproto: { k: 'cube', p: [-0.6, 0], c: 'blue', g: '{ }', t: 'Dog.prototype', s: 'bark()' },
+    aproto: { k: 'cube', p: [2.2, 0], c: 'purple', g: '{ }', t: 'Animal.prototype', s: 'eat()' },
+    oproto: { k: 'cube', p: [4.4, 1.6], c: 'gray', g: '{ }', t: 'Object.prototype', s: 'toString()' },
+    nul: { k: 'orb', p: [4.4, 3.4], c: 'gray', t: 'null', s: 'end of chain' },
+    cls: { k: 'hex', p: [-2.6, 2.7], c: 'green', g: 'class', t: 'class Dog extends Animal', r: 40, h: 34 }
+  },
+  edges: { l1: { a: 'dog', b: 'dproto', t: '__proto__', pk: true }, l2: { a: 'dproto', b: 'aproto', t: '__proto__', pk: true }, l3: { a: 'aproto', b: 'oproto', t: '__proto__', bend: 20 }, l4: { a: 'oproto', b: 'nul', t: '__proto__' } },
+  steps: [
+    st('CONCEPT', 'Every object has a hidden link', ['An object holds its own keys, plus a link to another object called its prototype.'], { add: ['dog', 'dproto'], e: ['l1'], hi: ['dog', 'dproto'], short: 'Link' }),
+    st('TECHNIQUE', 'Lookup follows the chain', ['rex.bark() is not on rex, so JavaScript follows the link and finds bark one step up.'], { hi: ['dproto'], read: [['rex.bark', 'found in Dog.prototype']], code: 'rex.bark();  // found one step up', short: 'Lookup' }),
+    st('TECHNIQUE', 'The chain keeps going', ['eat() is not on Dog.prototype either, so the search continues to Animal.prototype.'], { add: ['aproto'], e: ['l1', 'l2'], hi: ['aproto'], read: [['rex.eat', 'found two steps up']], short: 'Chain' }),
+    st('CONCEPT', 'It ends at null', ['The last stop is Object.prototype, then null. A missing key gives undefined.'], { add: ['oproto', 'nul'], e: ['l1', 'l2', 'l3', 'l4'], hi: ['oproto', 'nul'], read: [['rex.fly', 'undefined']], short: 'End' }),
+    st('TECHNIQUE', 'class is the friendly way', ['class and extends build exactly this chain. super calls the parent.'], { add: ['cls'], hi: ['cls'], code: "class Animal { eat() {} }\nclass Dog extends Animal {\n  constructor(n) { super(); this.name = n; }\n  bark() {}\n}", key: ['idea', 'class is syntax. Prototypes are what really runs.'], short: 'class' }),
+    st('RECAP', 'Remember', ['instanceof walks the chain. hasOwn checks only the object. Methods live on the prototype, shared by all instances.'], { hi: [], short: 'Recap' })
+  ]
+});
+
+lesson({
+  id: 'event-loop', lvl: 3, title: 'The Event Loop', sub: 'How a single-threaded language does many things at once.', min: 9, diff: 'Intermediate',
+  learn: ['The call stack', 'Web APIs and queues', 'Microtasks beat macrotasks', 'Predict the output order'],
+  nodes: {
+    stack: { k: 'cube', p: [-3.4, -0.5], w: 2, d: 2.2, h: 6, c: 'blue', t: 'Call stack', s: 'one at a time' },
+    sf: { k: 'cube', p: [-3.4, -0.5], z: 6, w: 1.6, d: 1.8, h: 20, c: 'blue', g: 'run' },
+    api: { k: 'hex', p: [0, -2], c: 'orange', g: 'timer', t: 'Web APIs', s: 'browser does the waiting', r: 40, h: 34 },
+    micro: { k: 'cube', p: [0.6, 1], w: 2.6, d: 1.2, h: 10, c: 'pink', t: 'Microtask queue', s: 'promises' },
+    macro: { k: 'cube', p: [0.6, 3], w: 2.6, d: 1.2, h: 10, c: 'amber', t: 'Task queue', s: 'setTimeout' },
+    loop: { k: 'hex', p: [3.8, 0.8], c: 'green', g: 'loop', t: 'Event loop', s: 'is stack empty?', r: 40, h: 34 },
+    log: { k: 'cube', p: [3.8, 3], c: 'gray', g: 'out', t: 'Console', s: '1 → 4 → 3 → 2', h: 20 }
+  },
+  edges: { toapi: { a: 'sf', b: 'api', t: 'setTimeout', pk: true }, tomacro: { a: 'api', b: 'macro', t: 'done', pk: true }, tomicro: { a: 'sf', b: 'micro', t: '.then', pk: true }, lp1: { a: 'loop', b: 'micro', t: 'first', pk: true }, lp2: { a: 'loop', b: 'macro', t: 'then', pk: true }, tostack: { a: 'loop', b: 'stack', t: 'push', bend: 24 } },
+  steps: [
+    st('PROBLEM', 'One thread, many jobs', ['JavaScript runs one thing at a time on the call stack. Waiting on a timer or a network call must not freeze it.'], { add: ['stack', 'sf'], hi: ['stack', 'sf'], code: "console.log(1);\nsetTimeout(() => console.log(2), 0);\nPromise.resolve().then(() => console.log(3));\nconsole.log(4);", short: 'Problem' }),
+    st('TECHNIQUE', 'Slow work is handed to the browser', ['setTimeout does not wait on the stack. The browser Web APIs hold the timer.'], { add: ['api'], e: ['toapi'], hi: ['api'], short: 'Web API' }),
+    st('TECHNIQUE', 'The timer lands in the task queue', ['When the timer ends, its callback waits in the task queue.'], { add: ['macro'], e: ['tomacro'], hi: ['macro'], short: 'Task queue' }),
+    st('TECHNIQUE', 'Promises use a faster lane', ['.then callbacks go to the microtask queue. It has higher priority.'], { add: ['micro'], e: ['tomicro'], hi: ['micro'], short: 'Microtask' }),
+    st('CONCEPT', 'The event loop decides what runs next', ['When the stack is empty, the loop takes everything from microtasks first, then one task.'], { add: ['loop'], e: ['lp1', 'lp2', 'tostack'], hi: ['loop'], key: ['idea', 'Synchronous code, then all microtasks, then one macrotask. Repeat.'], short: 'The loop' }),
+    st('RECAP', 'The answer: 1, 4, 3, 2', ['Sync lines run first (1, 4). Then the promise microtask (3). Then the timer task (2).'], { add: ['log'], e: [], hi: ['log'], read: [['Output', '1 4 3 2']], key: ['warn', 'setTimeout 0 still waits for every microtask.'], short: 'Output' })
+  ]
+});
+
+lesson({
+  id: 'promises', lvl: 3, title: 'Promises', sub: 'A promise is a receipt for a value that arrives later.', min: 7, diff: 'Intermediate',
+  learn: ['Pending, fulfilled, rejected', 'then, catch, finally', 'Chaining', 'all, race, allSettled'],
+  nodes: {
+    pend: { k: 'hex', p: [-3.2, 0], c: 'amber', g: '...', t: 'pending', s: 'waiting', r: 40, h: 34 },
+    ok: { k: 'hex', p: [0.8, -1.6], c: 'green', g: 'ok', t: 'fulfilled', s: 'has a value', r: 40, h: 34 },
+    bad: { k: 'hex', p: [0.8, 1.8], c: 'red', g: 'err', t: 'rejected', s: 'has a reason', r: 40, h: 34 },
+    th: { k: 'cube', p: [4, -1.6], c: 'blue', g: 'then', t: '.then(fn)' },
+    ca: { k: 'cube', p: [4, 1.8], c: 'purple', g: 'catch', t: '.catch(fn)' },
+    all: { k: 'cube', p: [-1.8, 3.8], c: 'teal', g: 'all', t: 'Promise.all', s: 'wait for every one', h: 22 },
+    race: { k: 'cube', p: [2.8, 3.8], c: 'pink', g: 'race', t: 'Promise.race', s: 'first one wins', h: 22 }
+  },
+  edges: { r1: { a: 'pend', b: 'ok', t: 'resolve', pk: true }, r2: { a: 'pend', b: 'bad', t: 'reject', pk: true }, t1: { a: 'ok', b: 'th', pk: true }, t2: { a: 'bad', b: 'ca', pk: true } },
+  steps: [
+    st('CONCEPT', 'Starts as pending', ['A new promise has no result yet. Think of a food-order receipt.'], { add: ['pend'], hi: ['pend'], code: 'const p = fetch("/api/user");', short: 'Pending' }),
+    st('CONCEPT', 'Settles exactly once', ['It either fulfils with a value or rejects with a reason. After that it never changes.'], { add: ['ok', 'bad'], e: ['r1', 'r2'], hi: ['ok', 'bad'], key: ['idea', 'Once settled, a promise is locked.'], short: 'Settle' }),
+    st('TECHNIQUE', 'then and catch react', ['then runs on success. catch runs on failure. finally runs on both.'], { add: ['th', 'ca'], e: ['r1', 'r2', 't1', 't2'], hi: ['th', 'ca'], code: 'p.then(show)\n .catch(report)\n .finally(hideSpinner);', short: 'then/catch' }),
+    st('TECHNIQUE', 'Chain them', ['Each then returns a new promise, so steps run in a line. One catch at the end handles any failure above.'], { hi: ['th'], code: 'fetch(url)\n  .then(r => r.json())\n  .then(data => use(data))\n  .catch(console.error);', short: 'Chain' }),
+    st('TECHNIQUE', 'Run many at once', ['Promise.all waits for all and fails if any fails. race gives the first to finish. allSettled never fails.'], { rm: ['pend', 'ok', 'bad', 'th', 'ca'], e: [], add: ['all', 'race'], hi: ['all', 'race'], code: 'const [a, b] = await Promise.all([f1(), f2()]);', key: ['know', 'Use all to run independent requests in parallel.'], short: 'Combine' }),
+    st('RECAP', 'Remember', ['Return inside then to pass a value on. Always add a catch.'], { hi: [], short: 'Recap' })
+  ]
+});
+
+lesson({
+  id: 'async-await', lvl: 3, title: 'async / await', sub: 'Write asynchronous code that reads top to bottom.', min: 6, diff: 'Intermediate',
+  learn: ['What async does', 'What await does', 'try / catch', 'Parallel vs sequential'],
+  nodes: {
+    fn: { k: 'cube', p: [-3.4, 0], c: 'blue', g: 'async', t: 'async function', s: 'always returns a promise' },
+    aw: { k: 'hex', p: [0, 0], c: 'amber', g: 'await', t: 'await fetch()', s: 'pauses here only', r: 40, h: 36 },
+    rest: { k: 'cube', p: [3.4, 0], c: 'green', g: 'next', t: 'next line', s: 'runs with the value' },
+    other: { k: 'cube', p: [0, 2.8], c: 'gray', g: 'page', t: 'rest of the page', s: 'keeps running' },
+    err: { k: 'cube', p: [3.4, 2.8], c: 'red', g: 'catch', t: 'catch (error)', s: 'on rejection' }
+  },
+  edges: { a1: { a: 'fn', b: 'aw', pk: true }, a2: { a: 'aw', b: 'rest', t: 'value ready', pk: true }, a3: { a: 'aw', b: 'err', t: 'rejected', dash: true, c: 'red' } },
+  steps: [
+    st('CONCEPT', 'async marks a function', ['An async function always returns a promise. Inside, you may use await.'], { add: ['fn'], hi: ['fn'], code: 'async function load() { ... }', short: 'async' }),
+    st('CONCEPT', 'await pauses just this function', ['await waits for the promise. The function pauses, but the rest of the page keeps running.'], { add: ['aw', 'other'], e: ['a1'], hi: ['aw', 'other'], code: 'const res = await fetch(url);', short: 'await' }),
+    st('TECHNIQUE', 'Then it continues', ['When the promise is ready the function resumes with the value.'], { add: ['rest'], e: ['a1', 'a2'], hi: ['rest'], code: 'const data = await res.json();', short: 'Resume' }),
+    st('TECHNIQUE', 'Errors use try / catch', ['A rejected promise is thrown at the await line, so a normal try/catch works.'], { add: ['err'], e: ['a1', 'a2', 'a3'], hi: ['err'], code: 'try { await load(); }\ncatch (e) { show(e.message); }', short: 'Errors' }),
+    st('WATCH OUT', 'Do not wait in a line by accident', ['Two awaits in a row run one after the other. Use Promise.all to run them together.'], { hi: ['aw'], code: '// slow: 2s + 2s\nconst a = await f1();\nconst b = await f2();\n// fast: 2s\nconst [a, b] = await Promise.all([f1(), f2()]);', key: ['warn', 'fetch does not reject on 404. Check res.ok.'], short: 'Parallel' })
+  ]
+});
+
+lesson({
+  id: 'events', lvl: 4, title: 'DOM Events', sub: 'Clicks travel down the page and bubble back up. Use that to your advantage.', min: 7, diff: 'Intermediate',
+  learn: ['Capturing and bubbling', 'stopPropagation', 'Event delegation', 'preventDefault'],
+  nodes: {
+    win: { k: 'cube', p: [-2.2, -0.6], w: 6, d: 4.4, h: 6, c: 'gray', t: 'document' },
+    ul: { k: 'cube', p: [-2.2, -0.4], z: 6, w: 4, d: 3, h: 6, c: 'blue', t: 'ul' },
+    li: { k: 'cube', p: [-2.2, -0.3], z: 12, w: 2, d: 1.6, h: 6, c: 'green', t: 'li' },
+    bt: { k: 'orb', p: [-2.2, -0.3], z: 18, c: 'amber', t: 'click here' },
+    log: { k: 'cube', p: [3.6, -1.2], w: 2, d: 3, h: 8, c: 'amber', t: 'Handlers', s: 'order they fire' },
+    del: { k: 'cube', p: [3.6, 2.4], c: 'purple', g: 'ul', t: 'one listener on ul', s: 'handles every li', h: 22 }
+  },
+  edges: { down: { a: 'win', b: 'bt', t: 'capture ↓', c: 'blue', pk: true, bend: -30 }, up: { a: 'bt', b: 'log', t: 'bubble ↑', c: 'orange', pk: true, bend: 20 } },
+  steps: [
+    st('CONCEPT', 'Elements sit inside each other', ['A button is inside an li, inside a ul, inside the document.'], { add: ['win', 'ul', 'li', 'bt'], hi: ['bt'], short: 'Nesting' }),
+    st('CONCEPT', 'Phase 1: capturing', ['The event travels from the top down to the target. Listeners rarely use this phase.'], { e: ['down'], hi: ['win'], short: 'Capture' }),
+    st('CONCEPT', 'Phase 2: bubbling', ['Then it bubbles back up. Each parent with a listener also hears the click.'], { add: ['log'], e: ['up'], hi: ['log'], key: ['idea', 'A click on the button is also a click on the li and the ul.'], short: 'Bubble' }),
+    st('TECHNIQUE', 'Delegation: one listener for many', ['Put one listener on the ul. event.target tells you which li was clicked. It works for items added later too.'], { add: ['del'], hi: ['del'], code: "ul.addEventListener('click', e => {\n  if (e.target.matches('li')) pick(e.target);\n});", key: ['know', 'Fewer listeners, less memory, works on dynamic lists.'], short: 'Delegate' }),
+    st('TECHNIQUE', 'Stop or cancel', ['stopPropagation stops the bubble. preventDefault cancels the browser default such as a form submit.'], { hi: ['bt'], code: 'e.stopPropagation();\ne.preventDefault();', key: ['warn', 'stopPropagation hides clicks from other code. Use sparingly.'], short: 'Control' })
+  ]
+});
+
+lesson({
+  id: 'modules', lvl: 5, title: 'ES Modules', sub: 'Split code into files with import and export.', min: 5, diff: 'Intermediate',
+  learn: ['Named and default exports', 'Why each file has its own scope', 'Dynamic import', 'ESM vs CommonJS'],
+  nodes: {
+    math: { k: 'cube', p: [-3.2, 0], c: 'blue', g: 'js', t: 'math.js', s: 'export add, PI' },
+    app: { k: 'cube', p: [0.4, 0], c: 'green', g: 'js', t: 'app.js', s: 'import { add }' },
+    page: { k: 'hex', p: [3.8, 0], c: 'amber', g: 'html', t: 'index.html', s: 'type="module"', r: 38, h: 34 },
+    lazy: { k: 'cube', p: [0.4, 2.8], c: 'purple', g: 'later', t: 'chart.js', s: 'loaded on demand', h: 22 }
+  },
+  edges: { i1: { a: 'math', b: 'app', t: 'import', pk: true }, i2: { a: 'app', b: 'page', t: 'loaded by', pk: true }, i3: { a: 'app', b: 'lazy', t: 'await import()', dash: true, pk: true } },
+  steps: [
+    st('CONCEPT', 'One file, one scope', ['Each module is private. Nothing leaks to the global scope unless you export it.'], { add: ['math'], hi: ['math'], code: 'export const PI = 3.14;\nexport function add(a, b) { return a + b; }\nexport default function main() {}', short: 'export' }),
+    st('TECHNIQUE', 'Import what you need', ['Named imports use braces. A default import does not. Names are live links to the original.'], { add: ['app'], e: ['i1'], hi: ['app'], code: "import main, { add, PI } from './math.js';", short: 'import' }),
+    st('TECHNIQUE', 'Load with type=module', ['The browser must be told the script is a module. Node uses .mjs or "type": "module".'], { add: ['page'], e: ['i1', 'i2'], hi: ['page'], code: '<script type="module" src="app.js"><\/script>', short: 'Load' }),
+    st('TECHNIQUE', 'Load later with import()', ['import() returns a promise, so you can load code only when needed. React lazy uses it.'], { add: ['lazy'], e: ['i1', 'i2', 'i3'], hi: ['lazy'], code: "const { draw } = await import('./chart.js');", key: ['know', 'Smaller first load, faster page.'], short: 'Dynamic' }),
+    st('RECAP', 'ESM vs CommonJS', ['ESM uses import/export and is static. CommonJS uses require and module.exports and loads at run time.'], { hi: [], short: 'Recap' })
+  ]
+});
+
+lesson({
+  id: 'errors', lvl: 2, title: 'Error Handling', sub: 'Catch problems without crashing the whole program.', min: 5, diff: 'Intermediate',
+  learn: ['try / catch / finally', 'throw your own errors', 'Error types', 'Errors in async code'],
+  nodes: {
+    tr: { k: 'cube', p: [-3.4, 0], c: 'blue', g: 'try', t: 'try { }', s: 'risky code' },
+    th: { k: 'orb', p: [-1.2, -1.8], c: 'red', t: 'throw', s: 'new Error()' },
+    ca: { k: 'cube', p: [1.4, 0], c: 'amber', g: 'catch', t: 'catch (e)', s: 'handle it' },
+    fi: { k: 'cube', p: [4, 0], c: 'green', g: 'finally', t: 'finally', s: 'always runs' },
+    pr: { k: 'cube', p: [0.4, 2.8], c: 'purple', g: 'async', t: 'async errors', s: '.catch or try + await', h: 22 }
+  },
+  edges: { x1: { a: 'tr', b: 'th', pk: true, c: 'red' }, x2: { a: 'th', b: 'ca', t: 'jumps', pk: true, c: 'red' }, x3: { a: 'ca', b: 'fi', pk: true }, x4: { a: 'tr', b: 'fi', t: 'no error', dash: true, bend: 26 } },
+  steps: [
+    st('CONCEPT', 'An error stops the program', ['When something throws and nobody catches it, the program stops there.'], { add: ['tr'], hi: ['tr'], code: 'JSON.parse("{bad");  // SyntaxError', short: 'Problem' }),
+    st('TECHNIQUE', 'throw raises an error', ['You can throw too. Always throw an Error object so you get a stack trace.'], { add: ['th'], e: ['x1'], hi: ['th'], code: "throw new Error('Age must be positive');", short: 'throw' }),
+    st('TECHNIQUE', 'catch handles it', ['Control jumps to the catch block with the error. The rest of try is skipped.'], { add: ['ca'], e: ['x1', 'x2'], hi: ['ca'], code: 'try { risky(); }\ncatch (e) { console.log(e.message); }', short: 'catch' }),
+    st('TECHNIQUE', 'finally always runs', ['Use it for cleanup, such as hiding a spinner, whatever happened.'], { add: ['fi'], e: ['x1', 'x2', 'x3', 'x4'], hi: ['fi'], short: 'finally' }),
+    st('WATCH OUT', 'Async needs its own catch', ['try/catch around a promise call does not catch it. Use .catch or await inside try.'], { add: ['pr'], hi: ['pr'], code: '// not caught:\ntry { fetch(u).then(go); } catch {}\n// caught:\ntry { await fetch(u); } catch {}', key: ['warn', 'Unhandled rejections can crash Node.'], short: 'Async' })
+  ]
+});
+
+lesson({
+  id: 'generators', lvl: 5, title: 'Iterators and Generators', sub: 'Functions that can pause and hand out values one at a time.', min: 6, diff: 'Advanced',
+  learn: ['The iterator protocol', 'for...of', 'function* and yield', 'Lazy infinite sequences'],
+  nodes: {
+    gen: { k: 'hex', p: [-3, 0], c: 'purple', g: 'fn*', t: 'function*', s: 'paused', r: 40, h: 36 },
+    y1: { k: 'orb', p: [0, -1.6], c: 'amber', g: '1', t: 'yield 1' },
+    y2: { k: 'orb', p: [1.6, 0], c: 'amber', g: '2', t: 'yield 2' },
+    y3: { k: 'orb', p: [3.2, 1.6], c: 'amber', g: '3', t: 'yield 3' },
+    done: { k: 'cube', p: [4.2, -1.4], c: 'green', g: 'done', t: 'done: true', h: 20 },
+    loop: { k: 'cube', p: [-3, 2.8], c: 'blue', g: 'of', t: 'for (x of gen())', s: 'asks for next()', h: 22 }
+  },
+  edges: { n1: { a: 'gen', b: 'y1', t: 'next()', pk: true }, n2: { a: 'y1', b: 'y2', t: 'next()', pk: true }, n3: { a: 'y2', b: 'y3', t: 'next()', pk: true }, n4: { a: 'y3', b: 'done', t: 'next()', pk: true, bend: -20 } },
+  steps: [
+    st('CONCEPT', 'An iterator hands out values', ['An iterator has a next() method that returns { value, done }. Arrays, strings, Maps and Sets all have one.'], { add: ['loop'], hi: ['loop'], code: 'for (const x of [10, 20]) console.log(x);', short: 'Iterator' }),
+    st('CONCEPT', 'A generator is a pausable function', ['function* makes a function that does not run until you ask. yield pauses it and gives a value.'], { add: ['gen'], hi: ['gen'], code: 'function* count() {\n  yield 1; yield 2; yield 3;\n}', short: 'Generator' }),
+    st('TECHNIQUE', 'Each next() resumes it', ['The first next() runs to the first yield. The next one carries on from there.'], { add: ['y1'], e: ['n1'], hi: ['y1'], code: 'const it = count();\nit.next();  // { value: 1, done: false }', short: 'next()' }),
+    st('TECHNIQUE', 'It remembers where it was', ['Local variables and position are kept between calls, like a closure.'], { add: ['y2', 'y3'], e: ['n1', 'n2', 'n3'], hi: ['y2', 'y3'], short: 'State' }),
+    st('TECHNIQUE', 'Then it is done', ['After the last yield, done becomes true.'], { add: ['done'], e: ['n1', 'n2', 'n3', 'n4'], hi: ['done'], key: ['idea', 'Great for infinite sequences: values are made only when asked for.'], short: 'Done' })
+  ]
+});
+
+lesson({
+  id: 'proxy', lvl: 5, title: 'Proxy, Reflect and Symbols', sub: 'Intercept what happens to an object. This powers Vue reactivity.', min: 6, diff: 'Advanced',
+  learn: ['What a Proxy is', 'get and set traps', 'Reflect', 'Symbols'],
+  nodes: {
+    code: { k: 'cube', p: [-3.6, 0], c: 'blue', g: 'code', t: 'Your code', s: 'obj.age = 5' },
+    px: { k: 'hex', p: [-0.4, 0], c: 'purple', g: 'trap', t: 'Proxy', s: 'set(target, key, v)', r: 42, h: 40 },
+    tg: { k: 'cube', p: [3.4, 0], c: 'amber', g: '{ }', t: 'Target object', s: 'age: 5' },
+    rej: { k: 'cube', p: [-0.4, 2.8], c: 'red', g: 'no', t: 'throw', s: 'age must be a number', h: 22 },
+    sym: { k: 'cube', p: [3.4, 2.8], c: 'pink', g: 'Sym', t: 'Symbol key', s: 'hidden, unique', h: 22 }
+  },
+  edges: { s1: { a: 'code', b: 'px', t: 'set', pk: true }, s2: { a: 'px', b: 'tg', t: 'Reflect.set', pk: true }, s3: { a: 'px', b: 'rej', t: 'invalid', dash: true, c: 'red' } },
+  steps: [
+    st('CONCEPT', 'A Proxy sits in front of an object', ['Every read, write or delete passes through the Proxy first.'], { add: ['px', 'tg'], e: [], hi: ['px'], code: 'const p = new Proxy(target, handler);', short: 'Proxy' }),
+    st('TECHNIQUE', 'Traps are your hooks', ['get runs on read. set runs on write. has, deleteProperty and others exist too.'], { add: ['code'], e: ['s1'], hi: ['code', 'px'], code: 'const handler = {\n  set(t, k, v) { /* check */ }\n};', short: 'Traps' }),
+    st('TECHNIQUE', 'Reflect does the normal action', ['Reflect.set performs the default write on the target. It mirrors every trap.'], { e: ['s1', 's2'], hi: ['tg'], code: 'set(t, k, v) {\n  return Reflect.set(t, k, v);\n}', short: 'Reflect' }),
+    st('TECHNIQUE', 'Validate or reject', ['The trap can refuse a bad value. Vue and MobX use this to notice changes.'], { add: ['rej'], e: ['s1', 's2', 's3'], hi: ['rej'], code: "if (typeof v !== 'number')\n  throw new TypeError('age must be a number');", short: 'Validate' }),
+    st('CONCEPT', 'Symbols are unique keys', ['A symbol is never equal to another, so it makes safe hidden keys. Symbol.iterator is how for...of works.'], { add: ['sym'], hi: ['sym'], code: 'const id = Symbol("id");\nobj[id] = 7;', short: 'Symbol' })
+  ]
+});
+
+lesson({
+  id: 'typed-arrays', lvl: 5, title: 'Typed Arrays', sub: 'Raw binary memory seen through different lenses.', min: 5, diff: 'Advanced',
+  learn: ['ArrayBuffer', 'Views', 'DataView', 'When to use them'],
+  nodes: {
+    buf: { k: 'cube', p: [-1.2, 0], w: 6, d: 1.4, h: 10, c: 'gray', t: 'ArrayBuffer(8)', s: '8 raw bytes' },
+    u8: { k: 'cube', p: [-1.2, 2.4], w: 6, d: 1, h: 14, c: 'blue', g: '8 × Uint8', t: 'Uint8Array', s: 'one byte each' },
+    u32: { k: 'cube', p: [-1.2, -2.2], w: 6, d: 1, h: 14, c: 'amber', g: '2 × Uint32', t: 'Uint32Array', s: 'four bytes each' },
+    dv: { k: 'cube', p: [4.4, 0.3], c: 'purple', g: 'DV', t: 'DataView', s: 'read any type at any byte', h: 24 }
+  },
+  edges: { v1: { a: 'u8', b: 'buf', t: 'same memory', pk: true }, v2: { a: 'u32', b: 'buf', t: 'same memory', pk: true }, v3: { a: 'dv', b: 'buf', t: 'by offset', pk: true } },
+  steps: [
+    st('CONCEPT', 'A buffer is just bytes', ['ArrayBuffer is a fixed block of raw memory. You cannot read it directly.'], { add: ['buf'], hi: ['buf'], code: 'const buf = new ArrayBuffer(8);', short: 'Buffer' }),
+    st('TECHNIQUE', 'A view reads it as numbers', ['Uint8Array sees 8 small numbers (0 to 255). Writes change the buffer.'], { add: ['u8'], e: ['v1'], hi: ['u8'], code: 'const a = new Uint8Array(buf);\na[0] = 255;', short: 'Uint8' }),
+    st('TECHNIQUE', 'Another view, same bytes', ['Uint32Array sees the same 8 bytes as 2 larger numbers. No copy is made.'], { add: ['u32'], e: ['v1', 'v2'], hi: ['u32'], key: ['idea', 'Different lenses, one memory.'], short: 'Uint32' }),
+    st('TECHNIQUE', 'DataView for exact control', ['DataView reads any type at any byte offset and lets you pick the byte order.'], { add: ['dv'], e: ['v1', 'v2', 'v3'], hi: ['dv'], code: 'const dv = new DataView(buf);\ndv.getUint16(2, true);', short: 'DataView' }),
+    st('RECAP', 'Where they appear', ['Images, audio, WebGL, file uploads and network protocols. Fast and compact.'], { hi: [], short: 'Recap' })
+  ]
+});
+
+lesson({
+  id: 'dom-nav', lvl: 4, title: 'DOM Navigation', sub: 'The page is a tree. Move around it with parent, child and sibling links.', min: 5, diff: 'Intermediate',
+  learn: ['The DOM tree', 'Parent and children', 'Siblings', 'querySelector'],
+  nodes: {
+    ul: { k: 'cube', p: [-0.6, -2.4], c: 'blue', g: 'ul', t: '<ul>', s: 'parent', h: 24 },
+    l1: { k: 'cube', p: [-3.2, 0.4], c: 'green', g: 'li', t: '<li> A', h: 24 },
+    l2: { k: 'cube', p: [-0.6, 0.4], c: 'amber', g: 'li', t: '<li> B', s: 'selected', h: 24 },
+    l3: { k: 'cube', p: [2, 0.4], c: 'green', g: 'li', t: '<li> C', h: 24 },
+    sp: { k: 'cube', p: [-0.6, 2.9], c: 'purple', g: 'sp', t: '<span>', s: 'child of B', h: 22 }
+  },
+  edges: { c1: { a: 'ul', b: 'l1' }, c2: { a: 'ul', b: 'l2' }, c3: { a: 'ul', b: 'l3' }, p1: { a: 'l2', b: 'ul', t: 'parentElement', c: 'blue', pk: true, bend: 18 }, ch: { a: 'l2', b: 'sp', t: 'firstElementChild', pk: true }, s1: { a: 'l2', b: 'l1', t: 'previous', pk: true, bend: 20 }, s2: { a: 'l2', b: 'l3', t: 'nextElementSibling', pk: true, bend: -20 } },
+  steps: [
+    st('CONCEPT', 'HTML becomes a tree', ['Every tag is a node. Nodes have a parent, children and siblings.'], { add: ['ul', 'l1', 'l2', 'l3'], e: ['c1', 'c2', 'c3'], hi: ['ul'], short: 'Tree' }),
+    st('TECHNIQUE', 'Go up to the parent', ['parentElement and closest() walk upward.'], { e: ['c1', 'c2', 'c3', 'p1'], hi: ['l2', 'ul'], code: "li.parentElement;\nli.closest('ul');", short: 'Parent' }),
+    st('TECHNIQUE', 'Go down to children', ['children lists child elements. firstElementChild gives the first.'], { add: ['sp'], e: ['c1', 'c2', 'c3', 'ch'], hi: ['sp'], code: 'li.children;\nli.firstElementChild;', short: 'Children' }),
+    st('TECHNIQUE', 'Go sideways to siblings', ['previousElementSibling and nextElementSibling move along the same level.'], { e: ['c1', 'c2', 'c3', 's1', 's2'], hi: ['l1', 'l3'], code: 'li.nextElementSibling;', short: 'Siblings' }),
+    st('TECHNIQUE', 'Jump straight to a node', ['querySelector finds the first match anywhere using CSS syntax. querySelectorAll returns all.'], { e: [], hi: ['l2'], code: "document.querySelector('ul > li:nth-child(2)');", key: ['know', 'Prefer these over old getElementById chains.'], short: 'Query' })
+  ]
+});
+
+lesson({
+  id: 'canvas', lvl: 4, title: 'Canvas and SVG', sub: 'Two ways to draw graphics in the browser.', min: 5, diff: 'Intermediate',
+  learn: ['Canvas draws pixels', 'SVG draws shapes', 'Which to choose'],
+  nodes: {
+    cv: { k: 'cube', p: [-2.8, 0], c: 'blue', g: 'px', t: '<canvas>', s: 'pixels, no memory', h: 26 },
+    ctx: { k: 'hex', p: [-2.8, 2.8], c: 'purple', g: '2d', t: 'ctx = getContext("2d")', r: 40, h: 30 },
+    sv: { k: 'cube', p: [2.8, 0], c: 'green', g: 'shape', t: '<svg>', s: 'objects in the DOM', h: 26 },
+    ev: { k: 'cube', p: [2.8, 2.8], c: 'amber', g: 'click', t: 'each shape has events', h: 22 }
+  },
+  edges: { d1: { a: 'ctx', b: 'cv', t: 'fillRect()', pk: true } },
+  steps: [
+    st('CONCEPT', 'Canvas paints pixels', ['You draw with commands, like painting. Once drawn, the browser forgets the shape.'], { add: ['cv'], hi: ['cv'], short: 'Canvas' }),
+    st('TECHNIQUE', 'Draw with a context', ['getContext gives you the pen. Then call fillRect, arc, lineTo.'], { add: ['ctx'], e: ['d1'], hi: ['ctx'], code: "const ctx = c.getContext('2d');\nctx.fillStyle = 'tomato';\nctx.fillRect(10, 10, 80, 40);", short: 'Draw' }),
+    st('CONCEPT', 'SVG keeps shapes', ['Each circle or rect is an element in the DOM. Style with CSS and attach events.'], { add: ['sv', 'ev'], hi: ['sv', 'ev'], code: '<svg><circle cx="50" cy="50" r="20"/></svg>', short: 'SVG' }),
+    st('RECAP', 'Choose by need', ['Canvas for games, charts with thousands of points, and image work. SVG for icons, logos and charts with few, interactive parts.'], { hi: [], short: 'Choose' })
+  ]
+});
+
+/* ===== app runtime ===== */
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+const rich = (s) => esc(s).replace(/`([^`]+)`/g, '<code>$1</code>');
+const store = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch (e) { } } };
+let done = new Set(); try { done = new Set(JSON.parse(store.get('jsm-done') || '[]')); } catch (e) { }
+let cur = 0, stepI = 0, timer = null, playing = false, openLv = new Set([0]);
+
+function isDark() {
+  const t = document.documentElement.getAttribute('data-theme');
+  if (t) return t === 'dark';
+  return window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches;
+}
+function stateAt(L, i) {
+  const on = new Set(), over = {};
+  for (let k = 0; k <= i; k++) {
+    const s = L.steps[k];
+    (s.add || []).forEach(n => on.add(n));
+    (s.rm || []).forEach(n => on.delete(n));
+    for (const n in (s.set || {})) over[n] = { ...(over[n] || {}), ...s.set[n] };
+  }
+  const s = L.steps[i];
+  return { on, over, hi: s.hi || [], edges: s.e || [] };
+}
+function buildSide() {
+  const side = $('side'); side.replaceChildren();
+  LEVELS.forEach((lv, li) => {
+    const items = LESSONS.map((l, idx) => [l, idx]).filter(([l]) => l.lvl === li);
+    if (!items.length) return;
+    const box = document.createElement('div'); box.className = 'lv' + (openLv.has(li) ? ' open' : '');
+    const hd = document.createElement('button'); hd.className = 'lvh';
+    const nd = items.filter(([l]) => done.has(l.id)).length;
+    hd.innerHTML = `<span class="sq" style="background:${face(lv.c, 't')}"></span><span>${esc(lv.name)}</span><span class="n">${nd}/${items.length}</span>`;
+    hd.onclick = () => { openLv.has(li) ? openLv.delete(li) : openLv.add(li); buildSide(); };
+    const ls = document.createElement('div'); ls.className = 'ls';
+    items.forEach(([l, idx]) => {
+      const b = document.createElement('button'); b.className = 'li' + (idx === cur ? ' on' : '') + (done.has(l.id) ? ' done' : '');
+      b.innerHTML = `<span class="ck"></span><span>${esc(l.title)}</span>`;
+      b.onclick = () => { location.hash = l.id; $('side').classList.remove('show'); $('menuBtn').setAttribute('aria-expanded', 'false'); };
+      ls.append(b);
+    });
+    box.append(hd, ls); side.append(box);
+  });
+  const p = document.createElement('div'); p.className = 'sidep';
+  p.innerHTML = `<div class="row"><span>Lessons done</span><span>${done.size}/${LESSONS.length}</span></div>`;
+  side.append(p);
+  $('pg').innerHTML = `<span>${done.size}/${LESSONS.length} done</span><span class="bar"><i style="width:${Math.round(done.size / LESSONS.length * 100)}%"></i></span>`;
+}
+function renderHead() {
+  const L = LESSONS[cur];
+  $('crumb').textContent = `${LEVELS[L.lvl].name}  ·  Lesson ${cur + 1} of ${LESSONS.length}`;
+  $('title').textContent = L.title; $('sub').textContent = L.sub;
+  $('chips').innerHTML = `<span class="chip">${L.steps.length} steps</span><span class="chip">${L.min} min</span><span class="chip">${esc(L.diff)}</span>`;
+  document.title = L.title + ' · JS in Motion';
+}
+function renderStepper() {
+  const L = LESSONS[cur], n = L.steps.length;
+  const h = document.createElement('h5'); h.innerHTML = `<span>Steps</span><span>${stepI + 1} / ${n}</span>`;
+  const dots = document.createElement('div'); dots.className = 'dots';
+  L.steps.forEach((s, i) => {
+    const b = document.createElement('button'); b.className = 'dot' + (i < stepI ? ' past' : '') + (i === stepI ? ' cur' : '');
+    b.innerHTML = `<span class="c">${i + 1}</span><span class="l">${esc(s.short || '')}</span>`;
+    b.onclick = () => go(i); dots.append(b);
+  });
+  $('stepper').replaceChildren(h, dots);
+}
+function renderPanel() {
+  const L = LESSONS[cur], s = L.steps[stepI], n = L.steps.length, p = $('panel');
+  const prevOn = stepI ? stateAt(L, stepI - 1).on : new Set(), now = stateAt(L, stepI).on;
+  const label = (id) => { const nd = L.nodes[id]; return nd.t || nd.g || id; };
+  const added = [...now].filter(x => !prevOn.has(x) && L.nodes[x].k !== 'tag' || false).map(x => '+ ' + label(x));
+  const gone = [...prevOn].filter(x => !now.has(x) && L.nodes[x].k !== 'tag').map(x => '− ' + label(x));
+  const chg = [...added, ...gone].slice(0, 5);
+  const tagCls = s.tag.split(' ')[0];
+  const learnN = L.learn.length, upto = Math.floor(((stepI + 1) / n) * learnN + (stepI === n - 1 ? 1 : 0));
+  let html = `<div class="card"><div class="stephead"><span class="tag ${tagCls}">${esc(s.tag)}</span><span>Step ${stepI + 1} of ${n}</span></div><h2>${esc(s.title)}</h2>`;
+  s.body.forEach(t => html += `<p>${rich(t)}</p>`);
+  if (s.code) html += `<pre class="cd">${esc(s.code)}</pre>`;
+  if (s.key) html += `<div class="kc ${s.key[0]}"><small>${{ idea: 'Key idea', know: 'Good to know', warn: 'Watch out' }[s.key[0]]}</small>${rich(s.key[1])}</div>`;
+  if (chg.length) html += `<div class="chg"><small>What changed</small><ul>${chg.map(c => `<li>${esc(c)}</li>`).join('')}</ul></div>`;
+  html += `<div class="nav"><button class="nbtn" id="bk" ${stepI === 0 ? 'disabled' : ''}>Back</button><button class="nbtn go" id="nx"><span>${stepI === n - 1 ? (cur < LESSONS.length - 1 ? 'Next lesson' : 'Finish') : 'Next'}</span><span>&rarr;</span></button></div>`;
+  html += `<div class="hint">Keys: &larr; &rarr; step, space plays, R replays</div></div>`;
+  html += `<div class="card learn"><h4>You will learn</h4>${L.learn.map((t, i) => `<label class="${i < upto ? 'on' : ''}"><span class="bx"></span><span>${esc(t)}</span></label>`).join('')}</div>`;
+  p.innerHTML = html;
+  $('bk').onclick = () => go(stepI - 1); $('nx').onclick = next;
+  const rd = $('read'); rd.replaceChildren();
+  (s.read || []).forEach(([k, v]) => { const d = document.createElement('div'); d.className = 'rd'; d.innerHTML = `<small>${esc(k)}</small><b>${esc(v)}</b>`; rd.append(d); });
+}
+function paint() {
+  const L = LESSONS[cur]; DARK = isDark();
+  Scene.apply(stateAt(L, stepI));
+  const st0 = stateAt(L, stepI);
+  Scene.apply({ ...st0, over: st0.over, hi: st0.hi, edges: st0.edges });
+  renderStepper(); renderPanel();
+  if (stepI === L.steps.length - 1 && !done.has(L.id)) { done.add(L.id); store.set('jsm-done', JSON.stringify([...done])); buildSide(); }
+}
+function go(i) {
+  const n = LESSONS[cur].steps.length;
+  stepI = Math.max(0, Math.min(n - 1, i)); paint();
+}
+function next() {
+  const n = LESSONS[cur].steps.length;
+  if (stepI < n - 1) go(stepI + 1);
+  else if (cur < LESSONS.length - 1) location.hash = LESSONS[cur + 1].id;
+  else stop();
+}
+function stop() { playing = false; clearInterval(timer); $('play').textContent = 'Play'; }
+function play() {
+  if (playing) return stop();
+  playing = true; $('play').textContent = 'Pause';
+  timer = setInterval(() => { const n = LESSONS[cur].steps.length; if (stepI < n - 1) go(stepI + 1); else stop(); }, 3800);
+}
+function open(idx) {
+  stop(); cur = idx; stepI = 0; openLv.add(LESSONS[idx].lvl);
+  Scene.load(LESSONS[idx]); renderHead(); buildSide();
+  DARK = isDark(); Scene.refresh(); paint();
+  window.scrollTo(0, 0);
+}
+function route() {
+  const id = (location.hash || '').slice(1);
+  const idx = LESSONS.findIndex(l => l.id === id);
+  open(idx < 0 ? 0 : idx);
+}
+$('replay').onclick = () => { stop(); go(0); play(); };
+$('play').onclick = play;
+$('menuBtn').onclick = () => { const s = $('side'); const sh = s.classList.toggle('show'); $('menuBtn').setAttribute('aria-expanded', String(sh)); };
+document.addEventListener('keydown', (e) => {
+  if (e.target.closest && e.target.closest('input,textarea')) return;
+  if (e.key === 'ArrowRight') { e.preventDefault(); next(); }
+  else if (e.key === 'ArrowLeft') { e.preventDefault(); go(stepI - 1); }
+  else if (e.key === ' ' && !(e.target.tagName === 'BUTTON')) { e.preventDefault(); play(); }
+  else if (e.key === 'r' || e.key === 'R') { stop(); go(0); play(); }
+});
+if (window.matchMedia) matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { Scene.refresh(); paint(); });
+Scene.init($('stageHost'));
+window.addEventListener('hashchange', route);
+route();
+</script>

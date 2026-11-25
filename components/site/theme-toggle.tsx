@@ -1,4 +1,5 @@
 "use client";
+import { Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 /**
@@ -14,9 +15,9 @@ export function ThemeToggle() {
     } catch {}
   }
   return (
-    <Button variant="ghost" size="sm" onClick={toggle} aria-label="Switch between night and light theme">
-      <span className="o-theme-label" data-for="dark">Night</span>
-      <span className="o-theme-label" data-for="light">Light</span>
+    <Button variant="outline" size="sm" className="o-theme-btn" onClick={toggle} aria-label="Switch between night and light theme">
+      <span className="o-theme-label" data-for="dark"><Moon aria-hidden="true" />Night</span>
+      <span className="o-theme-label" data-for="light"><Sun aria-hidden="true" />Light</span>
     </Button>
   );
 }

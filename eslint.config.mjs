@@ -12,6 +12,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Vendored, generated and copied files are not our code:
+    "public/**",
+    "content/**",
+    "src/generated/**",
   ]),
 ]);
 

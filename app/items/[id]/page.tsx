@@ -20,7 +20,7 @@ export default async function ItemPage({ params }: { params: Promise<{ id: strin
   const rows: [string, string][] = [
     ["Type", TYPE_LABEL[item.type]],
     ["Shelf and track", `${item.shelf} · ${item.track}`],
-    ["Version", `${item.version} (${item.date})`],
+    ["Version", `${item.version === "legacy" ? "Legacy" : item.version} (${item.date})`],
     ["Status", STATUS_LABEL[item.status]],
     ["Review by", item.reviewBy],
     ...Object.entries(item.counts ?? {}).map(([k, v]) => [k, String(v)] as [string, string]),
@@ -38,7 +38,7 @@ export default async function ItemPage({ params }: { params: Promise<{ id: strin
           Open {item.title}
         </Button>
       </div>
-      <dl className="o-grid">
+      <dl className="o-grid o-grid-facts">
         {rows.map(([k, v]) => (
           <div key={k} className="o-card">
             <dt className="o-eyebrow">{k}</dt>

@@ -1,0 +1,107 @@
+{
+ "lessons": [
+  {
+   "id": "cache-intro",
+   "title": "Why caching works: locality, latency, hit ratio"
+  },
+  {
+   "id": "cache-layers",
+   "title": "Cache layers: where caches live"
+  },
+  {
+   "id": "http-freshness",
+   "title": "HTTP caching I: freshness"
+  },
+  {
+   "id": "http-validation",
+   "title": "HTTP caching II: validation, Vary, busting, CDN controls"
+  },
+  {
+   "id": "cache-aside",
+   "title": "Cache-aside and read-through"
+  },
+  {
+   "id": "write-patterns",
+   "title": "Write-through, write-behind, write-around, refresh-ahead"
+  },
+  {
+   "id": "key-design",
+   "title": "Keys, serialisation, what to cache, memoization"
+  },
+  {
+   "id": "multi-level",
+   "title": "Local, distributed and multi-level caches"
+  },
+  {
+   "id": "eviction-policies",
+   "title": "Eviction policies and their trade-offs"
+  },
+  {
+   "id": "tinylfu-lru",
+   "title": "TinyLFU, W-TinyLFU, Caffeine and building an LRU/LFU"
+  },
+  {
+   "id": "redis-memory-ttl",
+   "title": "Redis memory, eviction, expiry, TTL design and jitter"
+  },
+  {
+   "id": "invalidation",
+   "title": "Invalidation strategies"
+  },
+  {
+   "id": "stampede",
+   "title": "Cache stampede and its mitigations"
+  },
+  {
+   "id": "pen-aval-break",
+   "title": "Penetration, avalanche, breakdown"
+  },
+  {
+   "id": "hot-big-keys",
+   "title": "Hot keys and big keys"
+  },
+  {
+   "id": "consistency-races",
+   "title": "Consistency problems and race timelines"
+  },
+  {
+   "id": "redis-depth",
+   "title": "Redis in depth: structures, execution, persistence, Lua"
+  },
+  {
+   "id": "redis-ha",
+   "title": "Redis replication, Sentinel, Cluster"
+  },
+  {
+   "id": "memcached-valkey",
+   "title": "Memcached, Redis vs Memcached, Valkey, licences"
+  },
+  {
+   "id": "consistent-hashing",
+   "title": "Consistent hashing, sharding, rendezvous hashing"
+  },
+  {
+   "id": "distributed-locks",
+   "title": "Distributed locks, Redlock, fencing"
+  },
+  {
+   "id": "cache-ops",
+   "title": "Metrics, alerting, capacity, cold start, warming"
+  },
+  {
+   "id": "cache-security-testing",
+   "title": "Cache security, auth and testing"
+  },
+  {
+   "id": "cache-edge-when-not",
+   "title": "CDN, DNS, API and DB caching, sessions, when caching hurts"
+  }
+ ],
+ "changelog": [
+  {
+   "version": "1.0",
+   "date": "2026-11-24",
+   "note": "First build: 24 lessons, 504 quiz questions, 190 concept questions, 32 puzzles, 19 hands-on tasks, 28 scenarios, 23 special topics, revision hub and sources and proofs tab. Redis, Memcached and CDN commands are illustrative unless a Node simulation computed them."
+  }
+ ]
+}

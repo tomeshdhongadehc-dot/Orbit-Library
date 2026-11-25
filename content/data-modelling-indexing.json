@@ -1,0 +1,120 @@
+{
+ "lessons": [
+  {
+   "id": "data-intro",
+   "title": "Entities, Relationships and Cardinality"
+  },
+  {
+   "id": "keys-fks",
+   "title": "Keys, Foreign Keys and ON DELETE"
+  },
+  {
+   "id": "identifiers",
+   "title": "Identifier Strategies: Serial, UUID, ULID, Snowflake"
+  },
+  {
+   "id": "types-constraints",
+   "title": "Data Types and Constraints"
+  },
+  {
+   "id": "normalisation",
+   "title": "Normalisation: 1NF to 5NF and Anomalies"
+  },
+  {
+   "id": "denormalisation-olap",
+   "title": "Denormalisation, OLTP versus OLAP, Star Schemas"
+  },
+  {
+   "id": "many-to-many-trees",
+   "title": "Many-to-Many, Junction Tables, Self-References and Trees"
+  },
+  {
+   "id": "polymorphic-eav-soft-delete",
+   "title": "Polymorphic Links, EAV, JSON Columns and Soft Delete"
+  },
+  {
+   "id": "audit-temporal-tenancy",
+   "title": "Audit, History, Temporal Data and Multi-Tenancy"
+  },
+  {
+   "id": "btree-storage",
+   "title": "How a B-tree works; heap vs clustered; B-tree vs LSM"
+  },
+  {
+   "id": "composite-covering",
+   "title": "Composite and covering indexes, leftmost prefix"
+  },
+  {
+   "id": "partial-expression-unique",
+   "title": "Partial, expression and unique indexes, NULLs"
+  },
+  {
+   "id": "other-index-types",
+   "title": "Hash, GIN, GiST, BRIN, full-text, trigram"
+  },
+  {
+   "id": "stats-planner",
+   "title": "Selectivity, statistics, ANALYZE and the planner"
+  },
+  {
+   "id": "explain-joins",
+   "title": "Reading EXPLAIN; scan and join algorithms"
+  },
+  {
+   "id": "index-not-used",
+   "title": "Why an index is not used; write cost, bloat, online builds"
+  },
+  {
+   "id": "pagination-n-plus-one",
+   "title": "Pagination, N+1, sorting and grouping with indexes"
+  },
+  {
+   "id": "acid-mvcc-isolation",
+   "title": "ACID, MVCC, isolation levels and anomalies"
+  },
+  {
+   "id": "locks-deadlocks",
+   "title": "Locks, SKIP LOCKED, NOWAIT and deadlocks"
+  },
+  {
+   "id": "concurrency-patterns",
+   "title": "Optimistic vs pessimistic, upserts, queues, 2PC"
+  },
+  {
+   "id": "document-modelling",
+   "title": "Document modelling (MongoDB): embed vs reference"
+  },
+  {
+   "id": "nosql-stores",
+   "title": "Key-value, wide-column, DynamoDB, graph, time-series, search"
+  },
+  {
+   "id": "cap-replication",
+   "title": "CAP, PACELC, consistency, replication and lag"
+  },
+  {
+   "id": "sharding",
+   "title": "Partitioning and sharding: shard keys, hot shards"
+  },
+  {
+   "id": "migrations",
+   "title": "Schema migrations without downtime"
+  },
+  {
+   "id": "backups-orm-design",
+   "title": "Backups, PITR, observability, ORM traps, defending a design"
+  }
+ ],
+ "changelog": [
+  {
+   "version": "1.1",
+   "date": "2026-11-24",
+   "note": "Quiz answer positions randomised (fixed-cycle patterns removed). Sources list now parsed from the research notes."
+  },
+  {
+   "version": "1.0",
+   "date": "2026-11-24",
+   "note": "First build: 26 lessons, 546 quiz questions, 190 concept questions, 30 puzzles, 18 hands-on tasks, 28 scenarios, 20 special topics, revision hub and sources and proofs tab. SQL and EXPLAIN examples are illustrative unless a Node simulation computed them."
+  }
+ ]
+}

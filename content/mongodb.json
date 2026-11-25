@@ -1,0 +1,139 @@
+{
+ "lessons": [
+  {
+   "id": "mongo-intro",
+   "title": "The Document Model"
+  },
+  {
+   "id": "bson-types",
+   "title": "BSON Types"
+  },
+  {
+   "id": "crud-queries",
+   "title": "CRUD, Query Operators, Sorting and Cursors"
+  },
+  {
+   "id": "update-operators",
+   "title": "Update Operators, Arrays, Upserts and Bulk Writes"
+  },
+  {
+   "id": "embed-reference",
+   "title": "Embedding versus Referencing"
+  },
+  {
+   "id": "schema-patterns",
+   "title": "Schema Design Patterns and Anti-patterns"
+  },
+  {
+   "id": "schema-validation",
+   "title": "Schema Validation with $jsonSchema"
+  },
+  {
+   "id": "mongo-vs-sql",
+   "title": "MongoDB versus Relational Modelling"
+  },
+  {
+   "id": "index-basics",
+   "title": "Index Fundamentals"
+  },
+  {
+   "id": "esr-multikey",
+   "title": "Compound Index Design: ESR and Multikey"
+  },
+  {
+   "id": "index-types",
+   "title": "Special Index Types and Properties"
+  },
+  {
+   "id": "covered-builds",
+   "title": "Covered queries, index builds, limits"
+  },
+  {
+   "id": "explain-planner",
+   "title": "explain() and the query planner"
+  },
+  {
+   "id": "agg-pipeline",
+   "title": "Aggregation I: stages and limits"
+  },
+  {
+   "id": "agg-stages",
+   "title": "Aggregation II: joins, facets, windows, outputs"
+  },
+  {
+   "id": "replica-oplog",
+   "title": "Replica sets, the oplog and syncing"
+  },
+  {
+   "id": "elections-rollback",
+   "title": "Elections, failover, arbiters and rollback"
+  },
+  {
+   "id": "concerns",
+   "title": "Write concern, read concern, read preference"
+  },
+  {
+   "id": "causal-cap",
+   "title": "Causal consistency, majority commit point, CAP"
+  },
+  {
+   "id": "transactions",
+   "title": "Multi-document transactions"
+  },
+  {
+   "id": "sharding-arch",
+   "title": "Sharding architecture"
+  },
+  {
+   "id": "shard-key",
+   "title": "Shard key choice"
+  },
+  {
+   "id": "chunks-balancer",
+   "title": "Chunks, the balancer, zones and resharding"
+  },
+  {
+   "id": "wiredtiger",
+   "title": "WiredTiger: cache, journal, checkpoints, compression"
+  },
+  {
+   "id": "change-streams",
+   "title": "Change streams"
+  },
+  {
+   "id": "special-collections",
+   "title": "Time series, capped collections, GridFS and views"
+  },
+  {
+   "id": "mongo-search",
+   "title": "MongoDB Search and Vector Search basics"
+  },
+  {
+   "id": "mongo-security",
+   "title": "Security: authentication, roles, TLS, encryption, injection"
+  },
+  {
+   "id": "backup-restore",
+   "title": "Backup and restore"
+  },
+  {
+   "id": "monitoring-perf",
+   "title": "Monitoring, profiling and performance"
+  },
+  {
+   "id": "drivers-mongoose",
+   "title": "Drivers, connection pooling and Mongoose"
+  },
+  {
+   "id": "mongo-scenarios",
+   "title": "Production failure modes and interview scenarios"
+  }
+ ],
+ "changelog": [
+  {
+   "version": "1.0",
+   "date": "2026-11-25",
+   "note": "first release. 32 lessons, 672 quiz questions, 190 interview concepts, 36 puzzles, 24 hands-on tasks, 30 scenarios, 29 special items. Server behaviour is from the MongoDB manual (9.0 at research time); no server was run."
+  }
+ ]
+}

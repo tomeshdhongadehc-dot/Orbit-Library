@@ -1,0 +1,130 @@
+{
+ "lessons": [
+  {
+   "id": "api-intro",
+   "title": "What an API Contract Is"
+  },
+  {
+   "id": "rest-constraints",
+   "title": "REST Constraints and the Maturity Model"
+  },
+  {
+   "id": "resources-uris",
+   "title": "Resources, URIs and Naming"
+  },
+  {
+   "id": "http-methods",
+   "title": "HTTP Methods: Safe and Idempotent"
+  },
+  {
+   "id": "status-codes",
+   "title": "Status Codes"
+  },
+  {
+   "id": "headers-negotiation",
+   "title": "Headers and Content Negotiation"
+  },
+  {
+   "id": "http-caching",
+   "title": "Caching and Conditional Requests"
+  },
+  {
+   "id": "put-patch-concurrency",
+   "title": "PUT, PATCH and Optimistic Concurrency"
+  },
+  {
+   "id": "representations",
+   "title": "Data formats: time, money, IDs, numbers"
+  },
+  {
+   "id": "query-params",
+   "title": "Filtering, sorting, fields and expansion"
+  },
+  {
+   "id": "pagination",
+   "title": "Pagination"
+  },
+  {
+   "id": "bulk-upload",
+   "title": "Bulk, batch, upload and large payloads"
+  },
+  {
+   "id": "error-design",
+   "title": "Error design"
+  },
+  {
+   "id": "idempotency",
+   "title": "Idempotency keys and safe retries"
+  },
+  {
+   "id": "rate-limiting",
+   "title": "Rate limiting and quotas"
+  },
+  {
+   "id": "retries-timeouts",
+   "title": "Timeouts, retries, backoff and breakers"
+  },
+  {
+   "id": "async-webhooks",
+   "title": "Long-running operations and webhooks"
+  },
+  {
+   "id": "versioning",
+   "title": "Versioning, deprecation and compatibility"
+  },
+  {
+   "id": "graphql",
+   "title": "GraphQL"
+  },
+  {
+   "id": "grpc",
+   "title": "gRPC and Protocol Buffers"
+  },
+  {
+   "id": "choosing-transport",
+   "title": "Choosing a Style and the Transport"
+  },
+  {
+   "id": "api-auth-cors",
+   "title": "Authentication, Authorization and CORS"
+  },
+  {
+   "id": "owasp-api",
+   "title": "OWASP API Security Top 10 (2023)"
+  },
+  {
+   "id": "openapi-dx",
+   "title": "OpenAPI, Docs, SDKs and Developer Experience"
+  },
+  {
+   "id": "api-testing",
+   "title": "Testing and Contracts"
+  },
+  {
+   "id": "gateway-ops",
+   "title": "Gateway, BFF, Observability and Lifecycle"
+  }
+ ],
+ "changelog": [
+  {
+   "version": "1.3",
+   "date": "2026-11-24",
+   "note": "Quiz answer positions randomised (several quiz files had a repeating pattern). Lesson helper names isolated per file in the builder."
+  },
+  {
+   "version": "1.2",
+   "date": "2026-11-24",
+   "note": "Added the Sources and proofs tab (version, build date, sources opened, verification results)."
+  },
+  {
+   "version": "1.1",
+   "date": "2026-11-24",
+   "note": "Retry amplification wording corrected to match the AWS Builders' Library (243x is 3^5). Quiz 1 options rebalanced. 375px layout checked."
+  },
+  {
+   "version": "1.0",
+   "date": "2026-11-24",
+   "note": "First build: 26 lessons, 546 quiz questions, 190 concept questions, 36 puzzles, 18 hands-on tasks, 30 scenarios, 22 special topics, revision hub."
+  }
+ ]
+}

@@ -21,7 +21,7 @@ export function ItemCard({ item }: { item: CatalogItem }) {
       <p className="o-muted">{item.description}</p>
       <div className="o-meta mt-auto">
         <span>{item.shelf} · {item.track}</span>
-        <span>v{item.version}</span>
+        <span>{item.version === "legacy" ? "Legacy" : `v${item.version}`}</span>
         <span>{item.date}</span>
       </div>
       <div className="o-meta">

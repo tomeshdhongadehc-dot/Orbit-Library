@@ -1,0 +1,621 @@
+<title>JS in Motion</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap">
+<style>
+/* Layout: a tab bar over one topic at a time; every topic is a small machine you operate. */
+:root {
+  --bg: #f2f4f8; --surface: #ffffff; --fg: #121820; --muted: #566274; --line: #dbe1ea;
+  --accent: #f7df1e; --accent-ink: #121820; --blue: #2457d6; --green: #157a3c; --red: #cc2b2b;
+  --code-bg: #0f141b; --code-fg: #e4eaf2; --tint: #eaeff7;
+  --font-display: "Space Grotesk", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0c1016; --surface: #141a23; --fg: #e8edf4; --muted: #98a4b6; --line: #263040;
+    --blue: #7aaeff; --green: #4ade80; --red: #ff7b72; --code-bg: #090d12; --tint: #1b2330;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0c1016; --surface: #141a23; --fg: #e8edf4; --muted: #98a4b6; --line: #263040;
+  --blue: #7aaeff; --green: #4ade80; --red: #ff7b72; --code-bg: #090d12; --tint: #1b2330;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 15px; line-height: 1.55; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 40px; }
+.wrap { max-width: 980px; margin: 0 auto; }
+button { font: inherit; color: inherit; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); border-bottom: 1px solid var(--line); margin: 0 calc(-1 * max(16px, env(safe-area-inset-left, 0px))); padding: 0 max(16px, env(safe-area-inset-left, 0px)); }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.bar { display: flex; align-items: center; gap: 20px; padding: 12px 0; min-width: 0; }
+.brand { display: flex; align-items: center; gap: 10px; font: 700 18px var(--font-display); color: var(--fg); text-decoration: none; white-space: nowrap; }
+.mark { background: var(--accent); color: var(--accent-ink); font: 700 13px var(--font-mono); padding: 3px 6px; border-radius: 4px; }
+.tabs { display: flex; gap: 4px; overflow-x: auto; min-width: 0; scrollbar-width: none; }
+.tabs::-webkit-scrollbar { display: none; }
+.tabs a { color: var(--muted); text-decoration: none; padding: 6px 12px; border-radius: 999px; white-space: nowrap; font-weight: 500; font-size: 14px; }
+.tabs a:hover { color: var(--fg); background: var(--tint); }
+.tabs a[aria-current="page"] { background: var(--accent); color: var(--accent-ink); }
+
+h1, h2 { font-family: var(--font-display); text-wrap: balance; margin: 0; letter-spacing: -0.02em; }
+.hero { padding: 48px 0 28px; }
+.hero h1 { font-size: clamp(34px, 6vw, 58px); line-height: 1.04; font-weight: 700; max-width: 14ch; }
+.hero h1 em { font-style: normal; background: linear-gradient(transparent 62%, var(--accent) 62%); }
+.hero p { color: var(--muted); max-width: 52ch; font-size: 17px; margin: 14px 0 0; }
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px; margin-top: 8px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px; text-decoration: none; color: var(--fg); display: flex; flex-direction: column; gap: 6px; min-width: 0; transition: transform .15s, border-color .15s; }
+.card:hover { transform: translateY(-2px); border-color: var(--fg); }
+.card .tag { font: 500 11px var(--font-mono); text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+.card h3 { margin: 0; font: 600 19px var(--font-display); }
+.card p { margin: 0; color: var(--muted); font-size: 14px; }
+.card .glyph { font: 500 13px var(--font-mono); background: var(--tint); border-radius: 8px; padding: 8px 10px; margin-top: 6px; color: var(--fg); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.topic { padding-top: 32px; }
+.kicker { font: 500 12px var(--font-mono); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 0 0 6px; }
+.topic h2 { font-size: clamp(28px, 4.6vw, 40px); font-weight: 700; }
+.lede { color: var(--muted); max-width: 60ch; font-size: 16px; margin: 8px 0 20px; }
+.stage { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 20px; min-width: 0; }
+.row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.btn { background: var(--fg); color: var(--bg); border: 0; border-radius: 10px; padding: 9px 16px; font-weight: 600; font-size: 14px; }
+.btn.alt { background: var(--tint); color: var(--fg); border: 1px solid var(--line); }
+.btn:disabled { opacity: .4; cursor: default; }
+.btn:not(:disabled):active { transform: translateY(1px); }
+.code { background: var(--code-bg); color: var(--code-fg); font: 400 13px/1.65 var(--font-mono); border-radius: 12px; padding: 16px 18px; margin: 16px 0 0; overflow-x: auto; }
+.code .c { color: #7d8a9c; } .code .s { color: #a5d6a7; } .code .k { color: #ff9e64; } .code .n { color: #7dcfff; }
+.say { margin: 16px 0 0; background: var(--tint); border-radius: 12px; padding: 12px 16px; max-width: 70ch; }
+.say b { font-family: var(--font-display); }
+.note { color: var(--muted); font-size: 14px; min-height: 2.9em; margin: 12px 0 0; }
+
+/* event loop */
+.codebox { background: var(--code-bg); border-radius: 12px; padding: 10px 0; font: 400 13px/1.9 var(--font-mono); color: var(--code-fg); overflow-x: auto; }
+.cl { display: flex; gap: 12px; padding: 0 16px; white-space: pre; border-left: 3px solid transparent; }
+.cl .ln { color: #5d6a7d; width: 1ch; }
+.cl.on { background: #1d2735; border-left-color: var(--accent); }
+.cols { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-top: 14px; }
+.col { border: 1px solid var(--line); border-radius: 12px; padding: 10px 10px 12px; min-height: 150px; display: flex; flex-direction: column; gap: 8px; background: var(--bg); }
+.col h4 { margin: 0; font: 600 13px var(--font-display); }
+.col small { color: var(--muted); font-size: 11.5px; margin-top: -6px; }
+.list { display: flex; flex-direction: column; gap: 6px; flex: 1; }
+.list.stack { flex-direction: column-reverse; justify-content: flex-start; }
+.chip { font: 500 12px var(--font-mono); padding: 6px 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); }
+.chip.stack { border-color: var(--fg); }
+.chip.micro { border-color: var(--blue); background: color-mix(in srgb, var(--blue) 12%, var(--surface)); }
+.chip.macro, .chip.web { border-color: var(--muted); }
+.chip.new { animation: pop .35s ease; }
+@keyframes pop { from { transform: scale(.7) translateY(-8px); opacity: 0; } to { transform: none; opacity: 1; } }
+.out { display: flex; gap: 8px; align-items: center; margin-top: 14px; min-height: 40px; flex-wrap: wrap; }
+.out b { font: 600 13px var(--font-display); margin-right: 4px; }
+.out .o { font: 600 15px var(--font-mono); background: var(--accent); color: var(--accent-ink); border-radius: 8px; padding: 4px 11px; }
+.out .o.new { animation: pop .35s ease; }
+.step { color: var(--muted); font: 500 12px var(--font-mono); margin-left: auto; }
+
+/* promises */
+.states { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.st { flex: 1 1 140px; border: 2px solid var(--line); border-radius: 12px; padding: 14px; text-align: center; transition: all .25s; opacity: .55; }
+.st b { display: block; font: 600 17px var(--font-display); }
+.st span { font-size: 12.5px; color: var(--muted); }
+.st.on { opacity: 1; }
+.st.pending.on { border-color: var(--muted); background: var(--tint); }
+.st.fulfilled.on { border-color: var(--green); background: color-mix(in srgb, var(--green) 14%, var(--surface)); }
+.st.rejected.on { border-color: var(--red); background: color-mix(in srgb, var(--red) 14%, var(--surface)); }
+.arrow { color: var(--muted); font-size: 20px; }
+.handlers { margin: 16px 0 0; display: grid; gap: 8px; }
+.h { display: flex; gap: 12px; align-items: center; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; font: 500 13px var(--font-mono); background: var(--bg); transition: all .25s; flex-wrap: wrap; }
+.h .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--line); flex: none; }
+.h.ran { border-color: var(--green); } .h.ran .dot { background: var(--green); }
+.h.skip { opacity: .45; } .h.skip .dot { background: var(--red); }
+.h .msg { margin-left: auto; color: var(--muted); font-family: var(--font-body); font-size: 13px; }
+
+/* closures */
+.counters { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; margin-top: 16px; }
+.cc { border: 1px solid var(--line); border-radius: 12px; padding: 14px; background: var(--bg); }
+.cc .scope { font: 500 12px var(--font-mono); color: var(--muted); }
+.cc .big { font: 700 44px var(--font-display); line-height: 1.1; margin: 6px 0 10px; font-variant-numeric: tabular-nums; }
+.cc .name { font: 600 14px var(--font-display); }
+
+/* prototype */
+.levels { display: grid; gap: 6px; margin-top: 16px; max-width: 520px; }
+.lv { border: 2px solid var(--line); border-radius: 12px; padding: 10px 14px; transition: all .2s; background: var(--bg); }
+.lv b { font: 600 15px var(--font-display); margin-right: 8px; }
+.lv .props { display: inline-flex; gap: 6px; flex-wrap: wrap; vertical-align: middle; }
+.lv .p { font: 500 12px var(--font-mono); background: var(--tint); border-radius: 6px; padding: 2px 7px; }
+.lv.look { border-color: var(--blue); background: color-mix(in srgb, var(--blue) 12%, var(--surface)); }
+.lv.hit { border-color: var(--green); background: color-mix(in srgb, var(--green) 16%, var(--surface)); }
+.lv.miss { opacity: .6; }
+.link { color: var(--muted); font: 500 12px var(--font-mono); padding-left: 18px; }
+.result { margin-top: 14px; font: 500 14px var(--font-mono); min-height: 1.6em; }
+
+/* this */
+.split { display: grid; grid-template-columns: minmax(0, 260px) minmax(0, 1fr); gap: 18px; }
+.opts { display: flex; flex-direction: column; gap: 6px; }
+.opt { text-align: left; background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 9px 12px; font: 500 12.5px var(--font-mono); }
+.opt[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.detail { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.detail .callcode { font: 500 14px var(--font-mono); background: var(--code-bg); color: var(--code-fg); border-radius: 10px; padding: 12px 14px; overflow-x: auto; white-space: pre; }
+.badge { display: inline-block; font: 600 14px var(--font-mono); padding: 6px 12px; border-radius: 8px; background: var(--tint); }
+.badge.good { background: color-mix(in srgb, var(--green) 18%, var(--surface)); }
+.badge.bad { background: color-mix(in srgb, var(--red) 18%, var(--surface)); }
+
+/* bubbling */
+.nest { border: 2px solid var(--line); border-radius: 14px; padding: 12px 14px 18px; background: var(--bg); }
+.nest .nest { background: var(--tint); margin-top: 8px; }
+.nest > b { font: 600 13px var(--font-mono); display: block; margin-bottom: 4px; pointer-events: none; }
+.nest button.target { background: var(--accent); color: var(--accent-ink); border: 0; border-radius: 8px; padding: 10px 18px; font-weight: 700; }
+.flash { animation: flash .5s; }
+@keyframes flash { from { border-color: var(--blue); } to { border-color: var(--line); } }
+.bub { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; }
+.log { list-style: none; margin: 0; padding: 0; font: 500 12.5px var(--font-mono); display: grid; gap: 4px; align-content: start; max-height: 300px; overflow-y: auto; }
+.log li { padding: 5px 9px; border-radius: 7px; background: var(--bg); display: flex; gap: 8px; }
+.log li.head { background: transparent; color: var(--muted); padding-top: 10px; }
+.log .ph { font-weight: 600; width: 8ch; flex: none; }
+.log .capture .ph { color: var(--blue); } .log .bubble .ph { color: var(--green); }
+.checks { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; font-size: 14px; }
+.checks label { display: flex; gap: 8px; align-items: center; cursor: pointer; }
+
+/* debounce */
+canvas.tl { width: 100%; height: 190px; display: block; border-radius: 10px; background: var(--bg); }
+.pad { margin-top: 12px; border: 2px dashed var(--line); border-radius: 12px; padding: 22px 12px; text-align: center; color: var(--muted); user-select: none; touch-action: none; }
+.pad:hover { border-color: var(--blue); color: var(--fg); }
+.range { display: flex; gap: 12px; align-items: center; font-size: 14px; flex-wrap: wrap; }
+.range input { accent-color: var(--blue); }
+.counts { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 12px; font: 500 13px var(--font-mono); }
+.counts b { font-size: 20px; font-family: var(--font-display); margin-right: 4px; }
+
+/* arrays */
+.pills { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; min-height: 42px; }
+.pill { font: 600 15px var(--font-mono); min-width: 42px; text-align: center; padding: 8px 10px; border-radius: 10px; border: 2px solid var(--line); background: var(--bg); transition: all .2s; }
+.pill.hit { border-color: var(--green); background: color-mix(in srgb, var(--green) 16%, var(--surface)); }
+.pill.dim { opacity: .35; }
+.pill.out { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); animation: pop .35s ease backwards; }
+.lbl { font: 600 12px var(--font-mono); color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin: 14px 0 8px; }
+.ops { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0; }
+.ops button { background: var(--bg); border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px; font: 500 13px var(--font-mono); }
+.ops button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+input.txt { font: 500 14px var(--font-mono); background: var(--bg); color: var(--fg); border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; width: min(260px, 100%); }
+
+#toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translate(-50%, 20px); background: var(--fg); color: var(--bg); padding: 10px 16px; border-radius: 10px; font-size: 14px; opacity: 0; pointer-events: none; transition: all .25s; z-index: 20; max-width: calc(100% - 32px); }
+#toast.on { opacity: 1; transform: translate(-50%, 0); }
+.foot { color: var(--muted); font-size: 13px; padding-top: 36px; }
+.foot a { color: var(--fg); }
+
+@media (max-width: 720px) {
+  .cols { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .split, .bub { grid-template-columns: minmax(0, 1fr); }
+  .bar { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .tabs { width: 100%; }
+  .stage { padding: 14px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+
+<header class="top"><div class="wrap bar">
+  <a class="brand" href="#home"><span class="mark">JS</span><span>JS in Motion</span></a>
+  <nav class="tabs" id="nav" aria-label="Topics"></nav>
+</div></header>
+<main class="wrap" id="view"></main>
+<footer class="wrap foot">Short, hands-on versions of the hardest JavaScript ideas. The long written reference with every example is <a href="https://claude.ai/artifact/G6MinAQffAA4c1exsDgR4c" target="_blank" rel="noopener">JavaScript Complete Guide: Basic to Advanced</a>.</footer>
+<div id="toast" role="status"></div>
+
+<script>
+const $ = (s, r = document) => r.querySelector(s);
+function h(tag, props, ...kids) {
+  const el = document.createElement(tag);
+  if (props) for (const [k, v] of Object.entries(props)) {
+    if (k === 'class') el.className = v;
+    else if (k === 'html') el.innerHTML = v;
+    else if (k.startsWith('on')) el.addEventListener(k.slice(2), v);
+    else if (v === true) el.setAttribute(k, '');
+    else if (v !== false && v != null) el.setAttribute(k, v);
+  }
+  for (const kid of kids.flat()) {
+    if (kid == null || kid === false) continue;
+    el.append(kid.nodeType ? kid : document.createTextNode(kid));
+  }
+  return el;
+}
+function hl(src) {
+  const esc = src.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const re = /(\/\/.*)|('(?:[^'\\]|\\.)*'|"(?:[^"\\]|\\.)*"|`(?:[^`\\]|\\.)*`)|\b(const|let|var|function|return|new|if|else|for|of|await|async|class|this|true|false|null|undefined)\b|\b(\d+)\b/g;
+  return esc.replace(re, (m, c, s, k, n) => c ? `<span class="c">${m}</span>` : s ? `<span class="s">${m}</span>` : k ? `<span class="k">${m}</span>` : `<span class="n">${m}</span>`);
+}
+let toastTimer;
+function toast(msg) {
+  const t = $('#toast'); t.textContent = msg; t.classList.add('on');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('on'), 2000);
+}
+function frame(m) {
+  const sec = h('section', { class: 'topic' },
+    h('p', { class: 'kicker' }, m.kicker), h('h2', null, m.title), h('p', { class: 'lede' }, m.lede));
+  const stage = h('div', { class: 'stage' });
+  sec.append(stage);
+  if (m.code) sec.append(h('pre', { class: 'code', html: hl(m.code) }));
+  if (m.say) sec.append(h('p', { class: 'say' }, h('b', null, 'Say it like this: '), m.say));
+  return { sec, stage };
+}
+
+/* ---------- 1. Event loop ---------- */
+const EL_CODE = [
+  "console.log('A');",
+  "setTimeout(() => console.log('B'), 0);",
+  "Promise.resolve().then(() => console.log('C'));",
+  "console.log('D');"
+];
+const S = (hl, stack, web, micro, macro, out, note) => ({ hl, stack, web, micro, macro, out, note });
+const EL_STEPS = [
+  S(-1, [], [], [], [], [], 'Guess the output order before you press Next. The script is about to start.'),
+  S(0, ['main()', 'log(A)'], [], [], [], [], 'Line 1 runs on the call stack.'),
+  S(0, ['main()'], [], [], [], ['A'], 'A is printed.'),
+  S(1, ['main()', 'setTimeout()'], ['timer 0ms'], [], [], ['A'], 'setTimeout hands the timer to the browser and returns at once.'),
+  S(1, ['main()'], ['timer 0ms'], [], [], ['A'], 'The code keeps going. The timer waits outside the stack.'),
+  S(2, ['main()', 'then()'], ['timer 0ms'], [], [], ['A'], 'The promise is already resolved, so its callback is queued right away.'),
+  S(2, ['main()'], ['timer 0ms'], ['log(C)'], [], ['A'], 'log(C) waits in the microtask queue.'),
+  S(3, ['main()', 'log(D)'], ['timer 0ms'], ['log(C)'], [], ['A'], 'Line 4 is still synchronous, so it runs before any queue.'),
+  S(3, ['main()'], ['timer 0ms'], ['log(C)'], [], ['A', 'D'], 'D is printed.'),
+  S(-1, [], [], ['log(C)'], ['log(B)'], ['A', 'D'], 'The script ends. The timer is done, so log(B) moves to the macrotask queue.'),
+  S(-1, ['log(C)'], [], [], ['log(B)'], ['A', 'D'], 'The stack is empty. Microtasks go first, so log(C) runs.'),
+  S(-1, [], [], [], ['log(B)'], ['A', 'D', 'C'], 'C is printed. No microtasks are left.'),
+  S(-1, ['log(B)'], [], [], [], ['A', 'D', 'C'], 'Now the loop takes one macrotask: log(B).'),
+  S(-1, [], [], [], [], ['A', 'D', 'C', 'B'], 'Done. The order is A, D, C, B.')
+];
+function renderEventLoop() {
+  const { sec, stage } = frame({
+    kicker: 'Async / the one everyone asks', title: 'The event loop',
+    lede: 'JavaScript runs one thing at a time. Step through a real snippet and watch where each piece of code waits.',
+    say: 'Synchronous code runs first, then every microtask (promises), then one macrotask (a timer), and the loop repeats.'
+  });
+  const codeBox = h('div', { class: 'codebox' }, EL_CODE.map((l, n) => h('div', { class: 'cl', 'data-n': n }, h('span', { class: 'ln' }, n + 1), h('code', { html: hl(l) }))));
+  const defs = [['stack', 'Call stack', 'runs now'], ['web', 'Web APIs', 'waiting outside'], ['micro', 'Microtasks', 'promises, first'], ['macro', 'Macrotasks', 'timers, one at a time']];
+  const lists = {};
+  const cols = h('div', { class: 'cols' }, defs.map(([k, t, s]) => {
+    lists[k] = h('div', { class: 'list' + (k === 'stack' ? ' stack' : '') });
+    return h('div', { class: 'col' }, h('h4', null, t), h('small', null, s), lists[k]);
+  }));
+  const out = h('div', { class: 'out' });
+  const note = h('p', { class: 'note' });
+  const stepLbl = h('span', { class: 'step' });
+  let i = 0, timer = null;
+  const prevB = h('button', { class: 'btn alt', onclick: () => go(i - 1) }, 'Back');
+  const nextB = h('button', { class: 'btn', onclick: () => go(i + 1) }, 'Next');
+  const playB = h('button', { class: 'btn alt', onclick: () => toggle() }, 'Auto-play');
+  const resetB = h('button', { class: 'btn alt', onclick: () => { stop(); go(0); } }, 'Reset');
+  function stop() { clearInterval(timer); timer = null; playB.textContent = 'Auto-play'; }
+  function toggle() {
+    if (timer) return stop();
+    if (i >= EL_STEPS.length - 1) go(0);
+    playB.textContent = 'Pause';
+    timer = setInterval(() => { if (i >= EL_STEPS.length - 1) stop(); else go(i + 1); }, 1500);
+  }
+  function go(n) {
+    const prevI = i; i = Math.max(0, Math.min(EL_STEPS.length - 1, n));
+    const s = EL_STEPS[i], p = i === prevI ? { stack: [], web: [], micro: [], macro: [], out: [] } : EL_STEPS[prevI];
+    codeBox.querySelectorAll('.cl').forEach(el => el.classList.toggle('on', +el.dataset.n === s.hl));
+    for (const k of ['stack', 'web', 'micro', 'macro']) {
+      lists[k].replaceChildren(...s[k].map(x => h('span', { class: 'chip ' + k + (p[k].includes(x) && i !== prevI ? '' : ' new') }, x)));
+    }
+    out.replaceChildren(h('b', null, 'Console'), ...s.out.map((x, k) => h('span', { class: 'o' + (k >= p.out.length && i > prevI ? ' new' : '') }, x)));
+    note.textContent = s.note; stepLbl.textContent = `Step ${i} / ${EL_STEPS.length - 1}`;
+    prevB.disabled = i === 0; nextB.disabled = i === EL_STEPS.length - 1;
+  }
+  stage.append(codeBox, cols, out, note, h('div', { class: 'row' }, prevB, nextB, playB, resetB, stepLbl));
+  go(0);
+  return { el: sec, cleanup: stop };
+}
+
+/* ---------- 2. Promises ---------- */
+function renderPromises() {
+  const { sec, stage } = frame({
+    kicker: 'Async', title: 'Promises',
+    lede: 'A promise starts pending and settles exactly once. Settle it and see which handlers fire.',
+    code: "const p = new Promise((resolve, reject) => { /* later */ });\np.then(v => console.log(v))        // fulfilled\n .catch(e => console.error(e))     // rejected\n .finally(() => console.log('done')); // either way",
+    say: 'A promise is a value that arrives later. It settles once, to a value or an error, and then never changes.'
+  });
+  let state = 'pending', timers = [];
+  const box = (k, t, s) => h('div', { class: 'st ' + k }, h('b', null, t), h('span', null, s));
+  const sP = box('pending', 'Pending', 'no result yet'), sF = box('fulfilled', 'Fulfilled', 'has a value'), sR = box('rejected', 'Rejected', 'has an error');
+  const mk = (code) => { const msg = h('span', { class: 'msg' }, 'waiting'); return { el: h('div', { class: 'h' }, h('span', { class: 'dot' }), code, msg), msg }; };
+  const hThen = mk('.then(v => ...)'), hCatch = mk('.catch(e => ...)'), hFin = mk('.finally(() => ...)');
+  function paint() {
+    sP.classList.toggle('on', state === 'pending'); sF.classList.toggle('on', state === 'fulfilled'); sR.classList.toggle('on', state === 'rejected');
+  }
+  function reset() {
+    timers.forEach(clearTimeout); timers = []; state = 'pending';
+    for (const x of [hThen, hCatch, hFin]) { x.el.className = 'h'; x.msg.textContent = 'waiting'; }
+    paint();
+  }
+  function settle(kind) {
+    if (state !== 'pending') { toast('Ignored: a promise settles only once.'); return; }
+    state = kind; paint();
+    const ok = kind === 'fulfilled';
+    timers.push(setTimeout(() => {
+      const run = ok ? hThen : hCatch, skip = ok ? hCatch : hThen;
+      run.el.className = 'h ran'; run.msg.textContent = ok ? 'received "data"' : 'received Error("nope")';
+      skip.el.className = 'h skip'; skip.msg.textContent = 'skipped';
+    }, 350));
+    timers.push(setTimeout(() => { hFin.el.className = 'h ran'; hFin.msg.textContent = 'ran, gets no argument'; }, 800));
+  }
+  stage.append(
+    h('div', { class: 'states' }, sP, h('span', { class: 'arrow' }, '→'), h('div', { style: 'display:grid;gap:10px;flex:1 1 140px' }, sF, sR)),
+    h('div', { class: 'row', style: 'margin-top:16px' },
+      h('button', { class: 'btn', onclick: () => settle('fulfilled') }, 'resolve("data")'),
+      h('button', { class: 'btn', onclick: () => settle('rejected') }, 'reject(new Error("nope"))'),
+      h('button', { class: 'btn alt', onclick: reset }, 'New promise')),
+    h('div', { class: 'handlers' }, hThen.el, hCatch.el, hFin.el)
+  );
+  reset();
+  return { el: sec, cleanup: () => timers.forEach(clearTimeout) };
+}
+
+/* ---------- 3. Closures ---------- */
+function renderClosures() {
+  const { sec, stage } = frame({
+    kicker: 'Functions', title: 'Closures',
+    lede: 'A function remembers the variables from where it was created. Make a few counters and notice each keeps its own count.',
+    code: "function makeCounter() {\n  let count = 0;\n  return () => ++count;\n}\nconst c1 = makeCounter(), c2 = makeCounter();",
+    say: 'A closure is a function plus the variables it was created next to. Each call to the outer function makes a fresh set.'
+  });
+  const counters = [{ n: 1, count: 0 }, { n: 2, count: 0 }];
+  const grid = h('div', { class: 'counters' });
+  function draw() {
+    grid.replaceChildren(...counters.map(c => h('div', { class: 'cc' },
+      h('div', { class: 'name' }, 'c' + c.n),
+      h('div', { class: 'scope' }, 'private scope: count = ' + c.count),
+      h('div', { class: 'big' }, String(c.count)),
+      h('button', { class: 'btn', onclick: () => { c.count++; draw(); } }, `c${c.n}()`))));
+  }
+  stage.append(
+    h('div', { class: 'row' },
+      h('button', { class: 'btn', onclick: () => { if (counters.length >= 4) return toast('Four is plenty for the demo.'); counters.push({ n: counters.length + 1, count: 0 }); draw(); } }, 'Call makeCounter() again'),
+      h('span', { style: 'color:var(--muted);font-size:14px' }, 'makeCounter() has already returned, yet each count survives.')),
+    grid);
+  draw();
+  return { el: sec };
+}
+
+/* ---------- 4. Prototypes ---------- */
+function renderPrototypes() {
+  const { sec, stage } = frame({
+    kicker: 'Objects', title: 'The prototype chain',
+    lede: 'Reading a property walks up a chain of objects until it finds the name or reaches null. Pick a property and watch the walk.',
+    code: "const animal = { eats: true };\nconst dog = Object.create(animal);\ndog.barks = true;\ndog.eats;   // not on dog, found one link up",
+    say: 'Every object links to a prototype. A missing property is searched for along that chain, and undefined means the chain ended.'
+  });
+  const levels = [{ n: 'dog', p: ['barks'] }, { n: 'animal', p: ['eats', 'speak'] }, { n: 'Object.prototype', p: ['toString', 'hasOwnProperty'] }, { n: 'null', p: [] }];
+  const vals = { barks: 'true', eats: 'true', speak: 'ƒ speak()', toString: 'ƒ toString()', fly: 'undefined' };
+  let token = 0, timers = [];
+  const els = levels.map(l => h('div', { class: 'lv' }, h('b', null, l.n), h('span', { class: 'props' }, l.p.map(x => h('span', { class: 'p' }, x)))));
+  const box = h('div', { class: 'levels' });
+  els.forEach((e, k) => { box.append(e); if (k < els.length - 1) box.append(h('div', { class: 'link' }, '↓ [[Prototype]]')); });
+  const result = h('div', { class: 'result' }, 'Pick a property to look up on dog.');
+  function look(prop) {
+    timers.forEach(clearTimeout); timers = []; const my = ++token;
+    els.forEach(e => e.className = 'lv'); result.textContent = `dog.${prop} ...`;
+    let k = 0;
+    const step = () => {
+      if (my !== token) return;
+      if (k > 0) els[k - 1].className = 'lv miss';
+      if (k >= levels.length) { result.textContent = `dog.${prop} → undefined (reached null, not found)`; return; }
+      const lv = levels[k];
+      if (lv.p.includes(prop)) { els[k].className = 'lv hit'; result.textContent = `dog.${prop} → ${vals[prop]}   found on ${lv.n}${k ? ', ' + k + ' link' + (k > 1 ? 's' : '') + ' up' : ' itself'}`; return; }
+      els[k].className = 'lv look'; k++;
+      timers.push(setTimeout(step, 650));
+    };
+    step();
+  }
+  stage.append(
+    h('div', { class: 'ops' }, ['barks', 'eats', 'speak', 'toString', 'fly'].map(p => h('button', { onclick: () => look(p) }, 'dog.' + p))),
+    box, result);
+  return { el: sec, cleanup: () => { token++; timers.forEach(clearTimeout); } };
+}
+
+/* ---------- 5. this ---------- */
+function renderThis() {
+  const { sec, stage } = frame({
+    kicker: 'Functions', title: 'What is this?',
+    lede: 'The value of this depends on how a function is called, not where it is written. Pick a call style.',
+    code: "const user = { name: 'Asha', greet() { return 'Hi, I am ' + this.name; } };\nconst other = { name: 'Ravi' };",
+    say: 'Look at the call, not the definition. A dot sets this, a detached call loses it, an arrow borrows it, call and bind set it by hand.'
+  });
+  const cases = [
+    { l: 'user.greet()', code: 'user.greet()', who: 'user', out: '"Hi, I am Asha"', good: true, why: 'The call has a dot, so this is the object before the dot.' },
+    { l: 'const f = user.greet; f()', code: 'const f = user.greet;\nf()', who: 'undefined (strict mode)', out: 'TypeError: cannot read "name" of undefined', good: false, why: 'The dot is gone, so nothing sets this. This is the classic lost-this bug.' },
+    { l: 'setTimeout(user.greet, 0)', code: 'setTimeout(user.greet, 0)', who: 'undefined or window', out: 'this.name is not "Asha"', good: false, why: 'Passing a method as a callback detaches it. Fix: setTimeout(() => user.greet(), 0).' },
+    { l: 'user.greet.call(other)', code: 'user.greet.call(other)', who: 'other', out: '"Hi, I am Ravi"', good: true, why: 'call, apply and bind set this by hand. bind returns a new function that is stuck to it.' },
+    { l: 'greet: () => this.name', code: 'const u = {\n  name: \'Asha\',\n  greet: () => this.name\n};\nu.greet()', who: 'the this around the object (not u)', out: 'undefined', good: false, why: 'Arrow functions have no this of their own. They use the one from where they were written.' },
+    { l: 'new Person(\'Asha\')', code: 'new Person(\'Asha\')', who: 'the brand-new object', out: 'Person { name: "Asha" }', good: true, why: 'new creates an empty object, points this at it, runs the function and returns the object.' }
+  ];
+  const detail = h('div', { class: 'detail' });
+  const btns = cases.map((c, k) => h('button', { class: 'opt', 'aria-pressed': 'false', onclick: () => pick(k) }, c.l));
+  function pick(k) {
+    const c = cases[k];
+    btns.forEach((b, j) => b.setAttribute('aria-pressed', String(j === k)));
+    detail.replaceChildren(
+      h('div', { class: 'callcode' }, c.code),
+      h('div', null, h('div', { class: 'lbl', style: 'margin-top:0' }, 'this is'), h('span', { class: 'badge ' + (c.good ? 'good' : 'bad') }, c.who)),
+      h('div', null, h('div', { class: 'lbl', style: 'margin-top:0' }, 'result'), h('span', { class: 'badge' }, c.out)),
+      h('p', { style: 'margin:0;color:var(--muted)' }, c.why));
+  }
+  stage.append(h('div', { class: 'split' }, h('div', { class: 'opts' }, btns), detail));
+  pick(0);
+  return { el: sec };
+}
+
+/* ---------- 6. Bubbling ---------- */
+function renderBubbling() {
+  const { sec, stage } = frame({
+    kicker: 'DOM', title: 'Event bubbling and capturing',
+    lede: 'Click the button. The event travels down to it, then bubbles back up through every parent.',
+    code: "outer.addEventListener('click', fn);        // bubbling (default)\nouter.addEventListener('click', fn, true);  // capturing\nevent.stopPropagation();                    // end the trip",
+    say: 'Events go down (capture), hit the target, then bubble up. That is why one listener on a parent can handle all its children.'
+  });
+  const log = h('ul', { class: 'log' });
+  const stopMid = h('input', { type: 'checkbox', id: 'stopmid' });
+  const btn = h('button', { class: 'target' }, 'Click me (button)');
+  const mid = h('div', { class: 'nest' }, h('b', null, 'ul'), btn);
+  const outer = h('div', { class: 'nest' }, h('b', null, 'div'), mid);
+  const add = (name, phase) => {
+    log.append(h('li', { class: phase }, h('span', { class: 'ph' }, phase), `<${name}> listener`));
+    log.scrollTop = log.scrollHeight;
+  };
+  const watch = (el, name) => {
+    el.addEventListener('click', () => { if (el === mid) el.classList.remove('flash'), void el.offsetWidth, el.classList.add('flash'); add(name, 'capture'); }, true);
+    el.addEventListener('click', (e) => { add(name, 'bubble'); if (el === mid && stopMid.checked) { e.stopPropagation(); log.append(h('li', { class: 'head' }, 'stopPropagation() called in <ul>, so the trip ends here')); } });
+  };
+  outer.addEventListener('click', (e) => { log.append(h('li', { class: 'head' }, 'click on <' + (e.target === btn ? 'button' : e.target.closest('.nest') === mid ? 'ul' : 'div') + '>')); }, true);
+  watch(outer, 'div'); watch(mid, 'ul'); btn.addEventListener('click', () => add('button', 'target'));
+  stage.append(h('div', { class: 'bub' },
+    h('div', null, outer, h('div', { class: 'checks' }, h('label', null, stopMid, 'Call stopPropagation() in the ul'), h('button', { class: 'btn alt', style: 'align-self:flex-start', onclick: () => log.replaceChildren() }, 'Clear log'))),
+    h('div', null, h('div', { class: 'lbl', style: 'margin-top:0' }, 'Order of listeners'), log)));
+  return { el: sec };
+}
+
+/* ---------- 7. Debounce vs throttle ---------- */
+function renderDebounce() {
+  const { sec, stage } = frame({
+    kicker: 'Patterns', title: 'Debounce vs throttle',
+    lede: 'Both tame fast events like typing and scrolling. Move over the pad quickly, then stop, and compare the three lanes.',
+    code: "function debounce(fn, ms) {\n  let t;\n  return (...args) => {\n    clearTimeout(t);\n    t = setTimeout(() => fn(...args), ms);\n  };\n}",
+    say: 'Debounce waits until the events stop. Throttle lets one through per time window. Search boxes debounce, scroll handlers throttle.'
+  });
+  const cv = h('canvas', { class: 'tl' });
+  const ctx = cv.getContext('2d');
+  const slider = h('input', { type: 'range', min: 200, max: 1500, step: 100, value: 600, id: 'delay' });
+  const dLbl = h('span', null, '600 ms');
+  const counts = h('div', { class: 'counts' });
+  const raw = [], deb = [], thr = [];
+  let dt = null, lastT = 0, W = 0, H = 0, raf = 0;
+  const delay = () => +slider.value;
+  function fire() {
+    const now = performance.now(); raw.push(now);
+    clearTimeout(dt); dt = setTimeout(() => deb.push(performance.now()), delay());
+    if (now - lastT >= delay()) { thr.push(now); lastT = now; }
+  }
+  const pad = h('div', { class: 'pad', onpointermove: fire, onclick: fire }, 'Move your mouse or finger across this pad (or tap it)');
+  function size() {
+    const r = cv.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
+    cv.width = Math.round(r.width * dpr); cv.height = Math.round(r.height * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); W = r.width; H = r.height;
+  }
+  function draw() {
+    const cs = getComputedStyle(document.documentElement), col = n => cs.getPropertyValue(n).trim();
+    ctx.clearRect(0, 0, W, H);
+    const x0 = 118, x1 = W - 14, span = 8000, now = performance.now();
+    const lanes = [['raw events', raw, col('--muted')], ['debounced', deb, col('--blue')], ['throttled', thr, col('--green')]];
+    ctx.font = '600 13px ' + col('--font-body'); ctx.textBaseline = 'middle';
+    lanes.forEach(([name, arr, c], k) => {
+      const y = 36 + k * 58;
+      ctx.fillStyle = col('--fg'); ctx.textAlign = 'left'; ctx.fillText(name, 12, y);
+      ctx.strokeStyle = col('--line'); ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(x0, y); ctx.lineTo(x1, y); ctx.stroke();
+      ctx.strokeStyle = c; ctx.lineWidth = name === 'raw events' ? 1.5 : 4; ctx.lineCap = 'round';
+      for (const t of arr) {
+        const x = x1 - (now - t) / span * (x1 - x0); if (x < x0) continue;
+        const half = name === 'raw events' ? 9 : 14;
+        ctx.beginPath(); ctx.moveTo(x, y - half); ctx.lineTo(x, y + half); ctx.stroke();
+      }
+    });
+    ctx.fillStyle = col('--muted'); ctx.textAlign = 'right'; ctx.font = '500 11px ' + col('--font-mono'); ctx.fillText('now', x1, H - 8);
+    ctx.textAlign = 'left'; ctx.fillText('8 s ago', x0, H - 8);
+    for (const a of [raw, deb, thr]) while (a.length && now - a[0] > span + 500) a.shift();
+    counts.replaceChildren(
+      h('span', null, h('b', null, String(totals.raw)), 'raw'), h('span', { style: 'color:var(--blue)' }, h('b', null, String(totals.deb)), 'debounced'), h('span', { style: 'color:var(--green)' }, h('b', null, String(totals.thr)), 'throttled'));
+    raf = requestAnimationFrame(draw);
+  }
+  const totals = { raw: 0, deb: 0, thr: 0 };
+  const fire0 = fire;
+  const origPush = (arr, key) => { const p = arr.push.bind(arr); arr.push = (v) => { totals[key]++; return p(v); }; };
+  origPush(raw, 'raw'); origPush(deb, 'deb'); origPush(thr, 'thr');
+  slider.addEventListener('input', () => { dLbl.textContent = slider.value + ' ms'; });
+  const onResize = () => size();
+  stage.append(h('div', { class: 'range' }, h('label', { for: 'delay' }, 'Delay'), slider, dLbl,
+    h('button', { class: 'btn alt', onclick: () => { raw.length = deb.length = thr.length = 0; totals.raw = totals.deb = totals.thr = 0; } }, 'Reset counts')), h('div', { style: 'height:12px' }), cv, pad, counts);
+  window.addEventListener('resize', onResize);
+  requestAnimationFrame(() => { size(); draw(); });
+  return { el: sec, cleanup: () => { cancelAnimationFrame(raf); clearTimeout(dt); window.removeEventListener('resize', onResize); } };
+}
+
+/* ---------- 8. Array methods ---------- */
+function renderArrays() {
+  const { sec, stage } = frame({
+    kicker: 'Data', title: 'map, filter, reduce and friends',
+    lede: 'Edit the numbers, pick a method, and see exactly which items go in and what comes out.',
+    code: "nums.map(n => n * 2)\nnums.filter(n => n % 2 === 0)\nnums.reduce((sum, n) => sum + n, 0)",
+    say: 'map transforms each item, filter keeps some, reduce folds everything into one value. None of them change the original array.'
+  });
+  const ops = [
+    { id: 'map', code: 'nums.map(n => n * 2)', run: a => ({ list: a.map(n => n * 2) }) },
+    { id: 'filter', code: 'nums.filter(n => n % 2 === 0)', test: n => n % 2 === 0, run: a => ({ list: a.filter(n => n % 2 === 0) }) },
+    { id: 'reduce', code: 'nums.reduce((sum, n) => sum + n, 0)', run: a => { let acc = 0; const steps = a.map(n => { const s = `${acc} + ${n} = ${acc + n}`; acc += n; return s; }); return { steps, final: acc }; } },
+    { id: 'find', code: 'nums.find(n => n > 3)', test: n => n > 3, run: a => ({ one: a.find(n => n > 3) }) },
+    { id: 'some', code: 'nums.some(n => n > 4)', test: n => n > 4, run: a => ({ bool: a.some(n => n > 4) }) },
+    { id: 'every', code: 'nums.every(n => n > 0)', test: n => n > 0, run: a => ({ bool: a.every(n => n > 0) }) }
+  ];
+  let cur = ops[0];
+  const input = h('input', { class: 'txt', id: 'nums', value: '1, 2, 3, 4, 5', 'aria-label': 'Numbers' });
+  const opBtns = ops.map(o => h('button', { 'aria-pressed': 'false', onclick: () => { cur = o; draw(); } }, o.id));
+  const inRow = h('div', { class: 'pills' }), outRow = h('div', { class: 'pills' }), call = h('div', { class: 'callcode', style: 'font:500 14px var(--font-mono);background:var(--code-bg);color:var(--code-fg);border-radius:10px;padding:10px 14px;margin-top:12px' });
+  const parse = () => input.value.split(',').map(s => s.trim()).filter(s => s !== '').map(Number).filter(Number.isFinite).slice(0, 10);
+  function draw() {
+    opBtns.forEach((b, k) => b.setAttribute('aria-pressed', String(ops[k] === cur)));
+    const a = parse(), r = cur.run(a);
+    call.textContent = cur.code + '   // nums = [' + a.join(', ') + ']';
+    const firstHit = cur.id === 'find' ? a.findIndex(cur.test) : -1;
+    inRow.replaceChildren(...a.map((n, k) => {
+      let c = 'pill';
+      if (cur.id === 'find') c += k === firstHit ? ' hit' : ' dim';
+      else if (cur.test) c += cur.test(n) ? ' hit' : ' dim';
+      return h('span', { class: c }, String(n));
+    }));
+    let outs;
+    if (r.list) outs = r.list.length ? r.list.map((n, k) => h('span', { class: 'pill out', style: `animation-delay:${k * 70}ms` }, String(n))) : [h('span', { style: 'color:var(--muted)' }, 'empty array')];
+    else if (r.steps) outs = [...r.steps.map((s, k) => h('span', { class: 'pill out', style: `animation-delay:${k * 90}ms;font-size:13px` }, s)), h('span', { class: 'pill out', style: `animation-delay:${r.steps.length * 90}ms` }, '= ' + r.final)];
+    else if ('one' in r) outs = [h('span', { class: 'pill out' }, r.one === undefined ? 'undefined' : String(r.one))];
+    else outs = [h('span', { class: 'pill out' }, String(r.bool))];
+    outRow.replaceChildren(...outs);
+  }
+  input.addEventListener('input', draw);
+  stage.append(h('div', { class: 'row' }, h('label', { for: 'nums', style: 'font-weight:600' }, 'nums ='), input), h('div', { class: 'ops' }, opBtns), h('div', { class: 'lbl', style: 'margin-top:4px' }, 'Input'), inRow, h('div', { class: 'lbl' }, 'Result'), outRow, call);
+  draw();
+  return { el: sec };
+}
+
+/* ---------- Home and router ---------- */
+const TOPICS = [
+  { id: 'event-loop', t: 'Event loop', hook: 'Why a promise beats setTimeout(0).', tag: 'Most asked', glyph: 'A  D  C  B', fn: renderEventLoop },
+  { id: 'promises', t: 'Promises', hook: 'Settle once, then fire the right handlers.', tag: 'Async', glyph: '.then  .catch  .finally', fn: renderPromises },
+  { id: 'closures', t: 'Closures', hook: 'Functions that remember their birthplace.', tag: 'Functions', glyph: 'c1() => 1, c2() => 1', fn: renderClosures },
+  { id: 'prototypes', t: 'Prototype chain', hook: 'How a missing property gets found.', tag: 'Objects', glyph: 'dog -> animal -> null', fn: renderPrototypes },
+  { id: 'this', t: 'this', hook: 'Six ways to call a function, six answers.', tag: 'Functions', glyph: 'user.greet()  vs  f()', fn: renderThis },
+  { id: 'bubbling', t: 'Bubbling', hook: 'Click once, hear it in every parent.', tag: 'DOM', glyph: 'div > ul > button', fn: renderBubbling },
+  { id: 'debounce', t: 'Debounce / throttle', hook: 'Tame typing and scrolling.', tag: 'Patterns', glyph: '|||||||||  =>  |', fn: renderDebounce },
+  { id: 'arrays', t: 'Array methods', hook: 'map, filter, reduce you can poke.', tag: 'Data', glyph: '[1,2,3] => [2,4,6]', fn: renderArrays }
+];
+function renderHome() {
+  const el = h('div', null,
+    h('section', { class: 'hero' }, h('h1', { html: 'JavaScript, <em>in motion</em>.' }), h('p', null, 'Eight ideas that decide most interviews. Each one is a small machine you can click, step through and break.')),
+    h('div', { class: 'cards' }, TOPICS.map(t => h('a', { class: 'card', href: '#' + t.id }, h('span', { class: 'tag' }, t.tag), h('h3', null, t.t), h('p', null, t.hook), h('span', { class: 'glyph' }, t.glyph)))));
+  return { el };
+}
+const nav = $('#nav'), view = $('#view');
+nav.append(h('a', { href: '#home' }, 'Start'), ...TOPICS.map(t => h('a', { href: '#' + t.id }, t.t)));
+let cleanup = null;
+function route() {
+  const id = location.hash.slice(1) || 'home';
+  if (cleanup) { try { cleanup(); } catch (e) { } cleanup = null; }
+  const topic = TOPICS.find(t => t.id === id);
+  const res = topic ? topic.fn() : renderHome();
+  view.replaceChildren(res.el); cleanup = res.cleanup || null;
+  nav.querySelectorAll('a').forEach(a => {
+    const on = a.getAttribute('href') === '#' + (topic ? id : 'home');
+    if (on) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
+    if (on) a.scrollIntoView({ block: 'nearest', inline: 'center' });
+  });
+  window.scrollTo(0, 0);
+}
+window.addEventListener('hashchange', route);
+route();
+</script>

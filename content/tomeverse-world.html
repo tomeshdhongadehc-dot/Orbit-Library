@@ -1,0 +1,436 @@
+<title>Tomeverse World Directions</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Unbounded:wght@600;800&display=swap">
+<style>
+/* Layout: one shared control bar under three switchable stages (iso island, free 3D, hybrid dashboard), then a comparison table. */
+:root{
+  --bg:#0A0918; --bg2:#141033; --panel:#1a1442; --ink:#F5F2FF; --muted:#B0A9CF; --faint:#7A7499;
+  --line:rgba(255,255,255,.13); --teal:#2EE0C6; --violet:#8F72FF; --tang:#FF7A45; --gold:#FFC857; --mag:#E8459B; --bad:#FF6B7A;
+  --f-display:"Unbounded","Arial Black",system-ui,sans-serif; --f-ui:"Manrope","Segoe UI",system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15px/1.55 var(--f-ui);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 56px}
+.wrap{max-width:1040px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+h1,h2,h3{margin:0;text-wrap:balance}
+.eyebrow{font:600 11px/1 var(--f-ui);letter-spacing:.16em;text-transform:uppercase;color:var(--faint)}
+h1{font:800 clamp(26px,5vw,42px)/1.08 var(--f-display);background:linear-gradient(115deg,var(--gold),var(--tang) 45%,var(--mag));-webkit-background-clip:text;background-clip:text;color:transparent;padding-bottom:4px}
+.sub{color:var(--muted);max-width:62ch;margin:6px 0 0}
+.tag{display:inline-block;margin-top:10px;font-size:12px;color:var(--gold);border:1px solid rgba(255,200,87,.35);border-radius:99px;padding:3px 10px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}
+.tab{padding:10px 16px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.04);font-weight:800;display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left}
+.tab small{font-weight:600;color:var(--muted);font-size:12px}
+.tab[aria-selected="true"]{background:linear-gradient(135deg,rgba(255,122,69,.28),rgba(232,69,155,.22));border-color:rgba(255,122,69,.6)}
+button{font:inherit;color:inherit;cursor:pointer;background:none;border:0}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:8px}
+.stage{position:relative;border:1px solid var(--line);border-radius:22px;overflow:hidden;background:var(--bg2)}
+.stage svg{display:block;width:100%;height:auto}
+.stage canvas{display:block;width:100%;height:100%;touch-action:pan-y;cursor:grab}
+.free-box{aspect-ratio:16/9;min-height:320px}
+.hint{position:absolute;left:14px;bottom:12px;font-size:12px;color:var(--muted);background:rgba(10,9,24,.6);padding:4px 10px;border-radius:99px;pointer-events:none}
+.fail{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:24px;color:var(--muted)}
+.plat{cursor:pointer}
+.rain{animation:rain 1s linear infinite}
+@keyframes rain{from{transform:translateY(0);opacity:1}to{transform:translateY(64px);opacity:0}}
+.zap{animation:zap 2.4s steps(1) infinite}
+@keyframes zap{0%,86%{opacity:0}88%,92%{opacity:1}94%{opacity:0}96%{opacity:1}100%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.rain,.zap{animation:none}.zap{opacity:1}}
+.notes{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:0;padding:0;list-style:none}
+.notes li{border-left:2px solid var(--line);padding:2px 0 2px 12px;color:var(--muted);font-size:14px}
+.notes b{display:block;color:var(--ink);font-size:12px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:2px}
+.bar{display:flex;flex-direction:column;gap:12px;padding:16px;border:1px solid var(--line);border-radius:20px;background:rgba(255,255,255,.03)}
+.chips{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px}
+.chip{display:flex;flex-direction:column;gap:2px;text-align:left;padding:10px 12px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.04)}
+.chip[aria-pressed="true"]{border-color:var(--c);box-shadow:0 0 0 1px var(--c) inset;background:rgba(255,255,255,.09)}
+.chip b{display:flex;align-items:center;gap:8px}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--c);flex:none}
+.chip small{color:var(--muted)}
+.acts{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.btn{padding:9px 14px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.06);font-weight:800;font-size:14px}
+.btn:hover{background:rgba(255,255,255,.12)}
+.btn.hot{background:linear-gradient(135deg,var(--gold),var(--tang) 50%,var(--mag));color:#1b0f08;border-color:transparent}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-left:auto}
+.seg button{padding:9px 14px;font-weight:800;font-size:14px;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--violet);color:#fff}
+.log{min-height:44px;color:var(--ink);background:rgba(143,114,255,.12);border-radius:12px;padding:10px 12px;font-size:14px}
+details{color:var(--muted);font-size:14px}
+summary{cursor:pointer;font-weight:800;color:var(--ink)}
+details ul{margin:8px 0 0;padding-left:18px;display:grid;gap:4px}
+.hero{position:relative}
+.hud{position:absolute;left:14px;top:12px;display:flex;gap:8px;flex-wrap:wrap}
+.hud span{font-size:12px;font-weight:800;background:rgba(10,9,24,.65);border:1px solid var(--line);border-radius:99px;padding:4px 10px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-top:12px}
+.card{border:1px solid var(--line);border-radius:18px;padding:14px;background:rgba(255,255,255,.04);display:flex;flex-direction:column;gap:10px;text-align:left;min-width:0}
+.card[aria-current="true"]{border-color:var(--c);box-shadow:0 0 0 1px var(--c) inset}
+.card header{display:flex;align-items:center;gap:8px}
+.card header b{flex:1;min-width:0}
+.wx{font-size:12px;font-weight:800;padding:3px 9px;border-radius:99px;border:1px solid var(--line)}
+.wx.w0{color:var(--gold)}.wx.w1{color:#c9c3ee}.wx.w2{color:var(--bad);border-color:rgba(255,107,122,.5)}
+.qh{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}
+.q{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;min-height:60px}
+.q li{display:flex;gap:8px;align-items:center;padding:7px 10px;border-radius:10px;background:rgba(255,255,255,.05);font-size:14px}
+.q li span{flex:1;min-width:0;overflow-wrap:anywhere}
+.q li.next{background:rgba(255,200,87,.16);outline:1px solid rgba(255,200,87,.5)}
+.q li.stale{background:rgba(255,107,122,.14)}
+.badge{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:99px;background:var(--gold);color:#241705}
+.age{font-size:11px;color:var(--faint)}.stale .age{color:var(--bad);font-weight:800}
+.meter{display:flex;gap:4px}.meter i{flex:1;height:6px;border-radius:3px;background:rgba(255,255,255,.12)}.meter i.on{background:var(--c)}
+.card.ghost{border-style:dashed;color:var(--faint);align-items:center;justify-content:center;min-height:140px;text-align:center}
+h2{font:800 20px/1.2 var(--f-display)}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:18px}
+table{border-collapse:collapse;width:100%;min-width:620px;font-size:14px}
+th,td{padding:12px 14px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+tr:last-child td{border-bottom:0}
+th{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+td:first-child{color:var(--muted);font-weight:800;white-space:nowrap}
+.pick{color:var(--teal);font-weight:800}
+.ask{display:grid;gap:6px;color:var(--muted)}
+.ask b{color:var(--ink)}
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Tomeverse · world dashboard</span>
+    <h1>Three ways the world could look</h1>
+    <p class="sub">Same tasks, same rules, three treatments. Add, finish, defer or skip a day below, and each district reacts.</p>
+    <span class="tag">Mock-up with example tasks. Nothing here connects to your app.</span>
+  </header>
+
+  <nav class="tabs" role="tablist" aria-label="Directions">
+    <button class="tab" role="tab" data-tab="iso" aria-selected="true">A · Isometric islands<small>Stylised, like Orbit</small></button>
+    <button class="tab" role="tab" data-tab="free" aria-selected="false">B · Free-camera 3D<small>Real 3D, drag to look around</small></button>
+    <button class="tab" role="tab" data-tab="hybrid" aria-selected="false">C · Hybrid dashboard<small>3D hero, task cards below</small></button>
+  </nav>
+
+  <section id="tab-iso">
+    <div class="stage" id="isoHost"></div>
+    <ul class="notes" style="margin-top:12px">
+      <li><b>Feels like</b>A tidy diorama. Crates pile up on each island, towers grow when you finish work.</li>
+      <li><b>Build route</b>Plain SVG, no library. Same engine as the Orbit lessons, added to the current app.</li>
+      <li><b>Cost</b>Lowest. Light on phones, easy to restyle, limited camera.</li>
+    </ul>
+  </section>
+
+  <section id="tab-free" hidden>
+    <div class="stage free-box" id="freeBox">
+      <canvas id="freeCv" aria-label="3D world: drag to rotate, tap a district to select it"></canvas>
+      <div class="fail" id="freeFail" hidden>This browser cannot start WebGL, so the 3D view is unavailable here.</div>
+      <span class="hint">Drag to rotate · tap an island to select · faint rings are future sections</span>
+    </div>
+    <ul class="notes" style="margin-top:12px">
+      <li><b>Feels like</b>A small planet you can walk around. Real depth, light, fog, rain and a sky that darkens.</li>
+      <li><b>Build route</b>Three.js (one extra library, about 150 KB) loaded only on the world screen.</li>
+      <li><b>Cost</b>Highest. Needs a phone fallback and care for battery. Most room to grow.</li>
+    </ul>
+  </section>
+
+  <section id="tab-hybrid" hidden>
+    <div class="stage hero"><div id="heroHost"></div><div class="hud"><span>Lv 3 · Junior Engineer</span><span>Streak 6</span><span>Example numbers</span></div></div>
+    <div class="cards" id="cards"></div>
+    <ul class="notes" style="margin-top:12px">
+      <li><b>Feels like</b>A real dashboard. The world is the hero, the details stay readable underneath.</li>
+      <li><b>Build route</b>Isometric hero (or Three.js later) plus the existing glass cards and lists.</li>
+      <li><b>Cost</b>Medium. Safest for daily use: accessible, searchable, works with the current screens.</li>
+    </ul>
+  </section>
+
+  <section class="bar" aria-label="Controls">
+    <div class="chips" id="chips"></div>
+    <div class="acts">
+      <button class="btn hot" data-do="add">Add task</button>
+      <button class="btn" data-do="finish">Finish next</button>
+      <button class="btn" data-do="defer">Defer next</button>
+      <button class="btn" data-do="drop">Drop next</button>
+      <button class="btn" data-do="skip">Skip a day</button>
+      <button class="btn" data-do="reset">Reset</button>
+      <div class="seg" role="group" aria-label="Order">
+        <button data-mode="stack" aria-pressed="true">Stack</button>
+        <button data-mode="queue" aria-pressed="false">Queue</button>
+      </div>
+    </div>
+    <div class="log" id="log" role="status" aria-live="polite"></div>
+    <details>
+      <summary>World rules in this mock-up</summary>
+      <ul>
+        <li><b>Stack</b>: the newest task is next. Old tasks sink to the bottom and go stale. <b>Queue</b>: the oldest task is next.</li>
+        <li>Finish: the island grows a tower (up to 6). Drop: the task vanishes, nothing grows.</li>
+        <li>Defer: the next task moves to the other end of the pile.</li>
+        <li>Skip a day: every task ages. Three days old turns red.</li>
+        <li>Pressure = tasks + 2 per stale task. Under 4 clear sky, 4 to 7 clouds, 8 or more storm.</li>
+      </ul>
+    </details>
+  </section>
+
+  <section style="display:flex;flex-direction:column;gap:12px">
+    <h2>Side by side</h2>
+    <div class="tbl"><table>
+      <thead><tr><th></th><th>A · Isometric</th><th>B · Free 3D</th><th>C · Hybrid</th></tr></thead>
+      <tbody>
+        <tr><td>Look</td><td>Diorama, fixed angle</td><td>Real 3D, orbit camera</td><td>Dashboard with 3D hero</td></tr>
+        <tr><td>Weather and mood</td><td>Clouds, rain, flicker</td><td>Fog, sky colour, rain, depth</td><td>Same as A or B, plus meters</td></tr>
+        <tr><td>Phones</td><td class="pick">Very light</td><td>Needs a fallback</td><td class="pick">Light, readable lists</td></tr>
+        <tr><td>Fit with current app</td><td>Drops in (vanilla JS, SVG)</td><td>Adds Three.js to the esbuild bundle</td><td>Reuses glass cards and Today list</td></tr>
+        <tr><td>Effort</td><td>Low</td><td>High</td><td>Medium</td></tr>
+        <tr><td>Room to grow</td><td>More islands, limited scale</td><td class="pick">Anything: cities, ports, fortress</td><td>Can start as A and upgrade to B</td></tr>
+      </tbody></table></div>
+    <div class="ask">
+      <span><b>My lean:</b> start with C using A's engine, then swap the hero for B once the rules feel right.</span>
+      <span>Tell me which direction you like, or which parts of each to combine.</span>
+    </div>
+  </section>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+'use strict';
+var $=function(id){return document.getElementById(id)};
+var REDUCED=false;try{REDUCED=matchMedia('(prefers-reduced-motion: reduce)').matches}catch(e){}
+
+/* ---------- colour helpers ---------- */
+function hex(h){return [1,3,5].map(function(i){return parseInt(h.slice(i,i+2),16)})}
+function toHex(a){return '#'+a.map(function(v){return Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,'0')}).join('')}
+function mix(a,b,t){var A=hex(a),B=hex(b);return toHex(A.map(function(v,i){return v+(B[i]-v)*t}))}
+function lit(c,t){return mix(c,'#ffffff',t)} function drk(c,t){return mix(c,'#000000',t)}
+
+/* ---------- shared world state ---------- */
+var DIST=[
+  {id:'dev',name:'Development',col:'#2EE0C6'},
+  {id:'ops',name:'DevOps',col:'#8F72FF'},
+  {id:'sec',name:'Cyber Security',col:'#FF7A45'}];
+var SEED={
+  dev:[['Build login form',0],['Write API tests',0],['Refactor hooks',0]],
+  ops:[['CI pipeline',1],['Docker image',0],['Staging deploy',0],['Add health check',0]],
+  sec:[['Rotate API keys',3],['Threat model',3],['Patch dependencies',1],['Audit logs',0],['Review auth flow',0]]};
+var POOL={
+  dev:['Add search filter','Fix flaky test','Review payments PR','Write README','Upgrade React','Ship dark mode','Add error boundary'],
+  ops:['Set up alerts','Terraform module','Rollback script','Cache layer','Cost report','Log retention'],
+  sec:['Scan images','Enable MFA','Pen-test notes','Secrets audit','CSP headers','Rate limiting']};
+var S={mode:'stack',sel:'dev',tab:'iso',pool:{dev:0,ops:0,sec:0},log:'Pick an island, then add or finish a task. The sky over each district follows its pile.'};
+function resetData(){DIST.forEach(function(d,i){S[d.id]={q:SEED[d.id].map(function(x){return {t:x[0],age:x[1]}}),built:[3,2,1][i],done:0}});S.pool={dev:0,ops:0,sec:0}}
+resetData();
+function pressure(id){var q=S[id].q;return q.length+2*q.filter(function(x){return x.age>=3}).length}
+function wx(id){var p=pressure(id);return p<4?0:p<8?1:2}
+var WXN=['Clear','Cloudy','Storm'];
+function nextIdx(id){return S.mode==='stack'?S[id].q.length-1:0}
+function stale(id){return S[id].q.filter(function(x){return x.age>=3}).length}
+function dn(id){return DIST.filter(function(d){return d.id===id})[0].name}
+
+function act(kind){
+  var id=S.sel,D=S[id],n=D.q.length,w0=wx(id),msg='',t;
+  var where=S.mode==='stack'?'top of the stack':'front of the queue';
+  if(kind==='add'){
+    var p=POOL[id];t=p[S.pool[id]%p.length];S.pool[id]++;D.q.push({t:t,age:0});
+    msg='Added "'+t+'" to '+dn(id)+'. The pile is now '+D.q.length+' high.';
+  }else if(kind==='skip'){
+    DIST.forEach(function(d){S[d.id].q.forEach(function(x){x.age++})});
+    var tot=DIST.reduce(function(a,d){return a+stale(d.id)},0);
+    msg='A day passed. Every task aged by one. '+tot+' now stale (3 days or more).';
+  }else if(kind==='reset'){resetData();msg='World reset to the starting state.';}
+  else if(!n){msg='Nothing queued in '+dn(id)+'. Add a task first.';}
+  else{
+    var i=nextIdx(id);t=D.q[i].t;
+    if(kind==='finish'){D.q.splice(i,1);D.done++;D.built=Math.min(6,D.built+1);msg='Finished "'+t+'" ('+where+'). '+dn(id)+' raised tower '+D.built+'.';}
+    else if(kind==='drop'){D.q.splice(i,1);msg='Dropped "'+t+'". Nothing grows, but the pile shrinks.';}
+    else if(kind==='defer'){var it=D.q.splice(i,1)[0];if(S.mode==='stack')D.q.unshift(it);else D.q.push(it);
+      msg='Deferred "'+t+'" to the '+(S.mode==='stack'?'bottom of the stack':'back of the queue')+'. It keeps its age.';}
+  }
+  var w1=wx(id);
+  if(w1!==w0&&kind!=='skip'&&kind!=='reset')msg+=' Sky over '+dn(id)+': '+WXN[w0].toLowerCase()+' to '+WXN[w1].toLowerCase()+'.';
+  S.log=msg;renderAll();
+}
+
+/* ---------- A / C : isometric SVG ---------- */
+function stars(seed,n,fade){var s=seed,o='';function r(){s=(s*9301+49297)%233280;return s/233280}
+  for(var i=0;i<n;i++){o+='<circle cx="'+(r()*900).toFixed(0)+'" cy="'+(r()*230).toFixed(0)+'" r="'+(0.6+r()*1.2).toFixed(1)+'" fill="#fff" opacity="'+((.15+r()*.5)*fade).toFixed(2)+'"/>'}return o}
+function isoSVG(o){
+  var s=o.s,ox=o.ox,oy=o.oy;
+  function P(x,y,z){return [ox+(x-y)*0.866*s,oy+(x+y)*0.5*s-z*s]}
+  function pt(x,y,z){var p=P(x,y,z);return p[0].toFixed(1)+','+p[1].toFixed(1)}
+  function box(x,y,z,w,d,h,c,stroke){
+    var st=stroke?' stroke="'+stroke+'" stroke-width="2" stroke-linejoin="round"':'';
+    return '<polygon points="'+pt(x,y,z+h)+' '+pt(x+w,y,z+h)+' '+pt(x+w,y+d,z+h)+' '+pt(x,y+d,z+h)+'" fill="'+lit(c,.28)+'"'+st+'/>'
+      +'<polygon points="'+pt(x,y+d,z)+' '+pt(x+w,y+d,z)+' '+pt(x+w,y+d,z+h)+' '+pt(x,y+d,z+h)+'" fill="'+c+'"'+st+'/>'
+      +'<polygon points="'+pt(x+w,y,z)+' '+pt(x+w,y+d,z)+' '+pt(x+w,y+d,z+h)+' '+pt(x+w,y,z+h)+'" fill="'+drk(c,.3)+'"'+st+'/>';
+  }
+  var avg=DIST.reduce(function(a,d){return a+wx(d.id)},0)/6;
+  var top=mix('#1b1550','#3a0f24',avg),g='';
+  var H=[2,3,1.6,2.6,3.4,2.2],TS=[[.5,.5],[1.9,.5],[3.3,.5],[.5,1.9],[1.9,1.9],[3.3,1.9]];
+  var clouds='';
+  DIST.forEach(function(d,i){
+    var k=i-1,bx=k*5.4,by=-k*5.4,D=S[d.id],sel=S.sel===d.id,body='';
+    var slab=mix(d.col,'#120E2C',.72);
+    body+=box(bx,by,-.5,5,5,.5,slab,sel?'#ffffff':null);
+    body+='<polygon points="'+pt(bx,by,0)+' '+pt(bx+5,by,0)+' '+pt(bx+5,by+5,0)+' '+pt(bx,by+5,0)+'" fill="none" stroke="'+d.col+'" stroke-width="'+(sel?3:1.5)+'" opacity="'+(sel?1:.7)+'"/>';
+    for(var b=0;b<D.built;b++){body+=box(bx+TS[b][0],by+TS[b][1],0,1.1,1.1,H[b],mix(d.col,'#1b1550',.3+.08*(b%3)))}
+    var nx=nextIdx(d.id),q=D.q;
+    for(var c=0;c<q.length;c++){
+      var col=q[c].age>=3?'#FF6B7A':'#FFC857',isN=c===nx,x,y,z=0,w=.7,hh=.6;
+      if(S.mode==='stack'){x=bx+3.8;y=by+3.8;z=c*.6;}
+      else{var row=Math.floor(c/6),cc=c%6;w=.6;hh=.5;x=bx+.4+cc*.75;y=by+4.0-row*.9;}
+      body+=box(x,y,z,w,w,hh,col,isN?'#ffffff':null);
+      if(isN){var tp=P(x+w/2,y+w/2,z+hh+.25);body+='<polygon points="'+(tp[0]-6).toFixed(1)+','+(tp[1]-14).toFixed(1)+' '+(tp[0]+6).toFixed(1)+','+(tp[1]-14).toFixed(1)+' '+tp[0].toFixed(1)+','+tp[1].toFixed(1)+'" fill="#fff"/>'}
+    }
+    var bot=P(bx+5,by+5,-.5),w=wx(d.id);
+    if(o.labels)body+='<text x="'+bot[0].toFixed(1)+'" y="'+(bot[1]+22).toFixed(1)+'" text-anchor="middle" fill="#F5F2FF" font-family="Manrope,Segoe UI,sans-serif" font-size="15" font-weight="800">'+d.name+'</text>'
+      +'<text x="'+bot[0].toFixed(1)+'" y="'+(bot[1]+40).toFixed(1)+'" text-anchor="middle" fill="#B0A9CF" font-family="Manrope,Segoe UI,sans-serif" font-size="12">'+q.length+' tasks · '+WXN[w].toLowerCase()+'</text>';
+    out=null;
+    clouds+=cloud(P(bx+2.5,by+2.5,7.4),w,i);
+    G.push('<g class="plat" data-sel="'+d.id+'">'+body+'</g>');
+  });
+  function cloud(p,w,i){
+    var x=p[0],y=p[1],r='';
+    if(w===0){r+='<circle cx="'+x+'" cy="'+y+'" r="26" fill="#FFC857" opacity=".16"/><circle cx="'+x+'" cy="'+y+'" r="14" fill="#FFC857"/>';}
+    else{
+      var f=w===1?'#9a94c4':'#4a3f6b';
+      r+='<ellipse cx="'+(x-18)+'" cy="'+(y+4)+'" rx="26" ry="14" fill="'+f+'"/><ellipse cx="'+(x+12)+'" cy="'+(y-2)+'" rx="30" ry="18" fill="'+f+'"/><ellipse cx="'+(x+30)+'" cy="'+(y+6)+'" rx="22" ry="12" fill="'+f+'"/>';
+      if(w===2){
+        for(var k=0;k<7;k++){r+='<line class="rain" style="animation-delay:'+(k*.14).toFixed(2)+'s" x1="'+(x-34+k*12)+'" y1="'+(y+20)+'" x2="'+(x-38+k*12)+'" y2="'+(y+34)+'" stroke="#9fb4ff" stroke-width="2" stroke-linecap="round"/>'}
+        r+='<polygon class="zap" points="'+(x+4)+','+(y+14)+' '+(x-6)+','+(y+34)+' '+(x+2)+','+(y+34)+' '+(x-4)+','+(y+52)+' '+(x+12)+','+(y+28)+' '+(x+4)+','+(y+28)+'" fill="#FFC857"/>';
+      }
+    }
+    return '<g pointer-events="none">'+r+'</g>';
+  }
+  var gid='sky'+o.id;
+  return '<svg viewBox="'+o.vb+'" role="img" aria-label="Isometric world with three islands: Development, DevOps and Cyber Security">'
+    +'<defs><linearGradient id="'+gid+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+top+'"/><stop offset="1" stop-color="#0A0918"/></linearGradient></defs>'
+    +'<rect width="900" height="460" fill="url(#'+gid+')"/>'+stars(o.seed,40,1-avg*.7)
+    +'<ellipse cx="450" cy="'+(o.oy+78)+'" rx="400" ry="120" fill="'+mix('#2EE0C6','#FF7A45',avg)+'" opacity=".06"/>'
+    +G.join('')+clouds+'</svg>';
+}
+var G=[],out;
+function renderIso(){G=[];$('isoHost').innerHTML=isoSVG({id:'A',s:28,ox:450,oy:250,vb:'0 0 900 460',labels:true,seed:7})}
+function renderHero(){G=[];$('heroHost').innerHTML=isoSVG({id:'C',s:28,ox:450,oy:250,vb:'60 50 780 350',labels:false,seed:11})}
+
+/* ---------- C : task cards ---------- */
+function renderCards(){
+  var h='';
+  DIST.forEach(function(d){
+    var D=S[d.id],q=D.q,order=S.mode==='stack'?q.map(function(x,i){return i}).reverse():q.map(function(x,i){return i}),w=wx(d.id);
+    var items=order.map(function(i,n){var x=q[i];return '<li class="'+(n===0?'next ':'')+(x.age>=3?'stale':'')+'"><span>'+esc(x.t)+'</span><i class="age">'+x.age+'d</i>'+(n===0?'<em class="badge" style="font-style:normal">Next</em>':'')+'</li>'}).join('');
+    var m='';for(var b=0;b<6;b++)m+='<i class="'+(b<D.built?'on':'')+'"></i>';
+    h+='<button class="card" style="--c:'+d.col+'" data-sel="'+d.id+'" aria-current="'+(S.sel===d.id)+'">'
+      +'<header><i class="dot" style="--c:'+d.col+'"></i><b>'+d.name+'</b><span class="wx w'+w+'">'+WXN[w]+'</span></header>'
+      +'<div class="qh">'+(S.mode==='stack'?'Top of stack first':'Front of queue first')+' · '+q.length+' tasks</div>'
+      +'<ol class="q">'+(items||'<li><span style="color:var(--faint)">Empty. The sky is calm.</span></li>')+'</ol>'
+      +'<div><div class="qh" style="margin-bottom:5px">Towers '+D.built+'/6 · finished '+D.done+'</div><div class="meter" style="--c:'+d.col+'">'+m+'</div></div></button>';
+  });
+  h+='<div class="card ghost"><b>+ New section</b><small>DevOps, Security and Development are first. More districts get added here later.</small></div>';
+  $('cards').innerHTML=h;
+}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+
+/* ---------- shared bar ---------- */
+function renderBar(){
+  $('chips').innerHTML=DIST.map(function(d){var w=wx(d.id),st=stale(d.id);
+    return '<button class="chip" style="--c:'+d.col+'" data-sel="'+d.id+'" aria-pressed="'+(S.sel===d.id)+'"><b><i class="dot"></i>'+d.name+'</b><small>'+S[d.id].q.length+' tasks · '+WXN[w].toLowerCase()+(st?' · '+st+' stale':'')+'</small></button>'}).join('');
+  document.querySelectorAll('[data-mode]').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.mode===S.mode))});
+  $('log').textContent=S.log;
+}
+
+/* ---------- B : Three.js ---------- */
+var F={ready:false,fail:false,pick:[],bobs:[],rains:[],raf:0,theta:.6,phi:1.0,rad:19,drag:null,last:0};
+var MAT={},GEO={};
+function mat(c,em){var k=c+(em||'');if(!MAT[k])MAT[k]=new THREE.MeshLambertMaterial({color:c,emissive:em||'#000000'});return MAT[k]}
+function mesh(g,c,sx,sy,sz,x,y,z,em){var m=new THREE.Mesh(GEO[g],mat(c,em));m.scale.set(sx,sy,sz);m.position.set(x,y,z);return m}
+function ang(i){return Math.PI/2+i*2*Math.PI/3}
+function initFree(){
+  if(F.ready||F.fail)return;
+  try{
+    if(typeof THREE==='undefined')throw new Error('no three');
+    var cv=$('freeCv'),r=new THREE.WebGLRenderer({canvas:cv,antialias:true});
+    r.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+    GEO={box:new THREE.BoxGeometry(1,1,1),cyl:new THREE.CylinderGeometry(1,1,1,40),sph:new THREE.SphereGeometry(1,16,12),cone:new THREE.ConeGeometry(1,1,12)};
+    var scene=new THREE.Scene(),cam=new THREE.PerspectiveCamera(45,16/9,.1,100);
+    scene.add(new THREE.AmbientLight(0xb8b0ff,.75));
+    var sun=new THREE.DirectionalLight(0xffffff,.85);sun.position.set(6,12,8);scene.add(sun);
+    var ground=new THREE.Mesh(new THREE.CircleGeometry(15,64),new THREE.MeshLambertMaterial({color:0x151034}));ground.rotation.x=-Math.PI/2;ground.position.y=-.01;scene.add(ground);
+    for(var k=0;k<3;k++){var a=ang(k)+Math.PI/3;
+      var ring=new THREE.Mesh(new THREE.RingGeometry(2.8,3,48),new THREE.MeshBasicMaterial({color:0x7a7499,transparent:true,opacity:.35,side:THREE.DoubleSide}));
+      ring.rotation.x=-Math.PI/2;ring.position.set(Math.cos(a)*5.8,.02,Math.sin(a)*5.8);scene.add(ring)}
+    var world=new THREE.Group();scene.add(world);
+    F.r=r;F.scene=scene;F.cam=cam;F.world=world;F.ray=new THREE.Raycaster();F.ready=true;
+    new ResizeObserver(sizeFree).observe($('freeBox'));
+    cv.addEventListener('pointerdown',function(e){F.drag={x:e.clientX,y:e.clientY,moved:0};try{cv.setPointerCapture(e.pointerId)}catch(_){}});
+    cv.addEventListener('pointermove',function(e){var d=F.drag;if(!d)return;var dx=e.clientX-d.x,dy=e.clientY-d.y;d.x=e.clientX;d.y=e.clientY;d.moved+=Math.abs(dx)+Math.abs(dy);F.theta-=dx*.008;F.phi=Math.max(.45,Math.min(1.35,F.phi-dy*.006))});
+    cv.addEventListener('pointerup',function(e){var d=F.drag;F.drag=null;if(d&&d.moved<5)pickAt(e)});
+    cv.addEventListener('pointercancel',function(){F.drag=null});
+    sizeFree();buildFree();
+  }catch(err){F.fail=true;$('freeFail').hidden=false;$('freeCv').style.display='none'}
+}
+function sizeFree(){if(!F.ready)return;var b=$('freeBox'),w=b.clientWidth,h=b.clientHeight;if(!w||!h)return;F.r.setSize(w,h,false);F.cam.aspect=w/h;F.cam.updateProjectionMatrix()}
+function pickAt(e){var cv=$('freeCv'),b=cv.getBoundingClientRect();
+  F.ray.setFromCamera({x:((e.clientX-b.left)/b.width)*2-1,y:-((e.clientY-b.top)/b.height)*2+1},F.cam);
+  var hit=F.ray.intersectObjects(F.pick,false)[0];if(hit){S.sel=hit.object.userData.did;S.log='Selected '+dn(S.sel)+'.';renderAll()}}
+function buildFree(){
+  if(!F.ready)return;
+  while(F.world.children.length)F.world.remove(F.world.children[0]);
+  F.pick=[];F.bobs=[];F.rains=[];
+  var TS=[[-1.5,-1.4],[0,-1.4],[1.5,-1.4],[-1.5,-.1],[0,-.1],[1.5,-.1]],H=[1.6,2.4,1.3,2.0,2.8,1.8];
+  DIST.forEach(function(d,i){
+    var a=ang(i),g=new THREE.Group(),D=S[d.id],sel=S.sel===d.id,w=wx(d.id);
+    g.position.set(Math.cos(a)*5.8,0,Math.sin(a)*5.8);g.rotation.y=Math.atan2(-Math.cos(a),-Math.sin(a));
+    var slab=mesh('cyl',mix(d.col,'#120E2C',.72),3,.5,3,0,.25,0);slab.userData.did=d.id;g.add(slab);F.pick.push(slab);
+    var rim=new THREE.Mesh(new THREE.TorusGeometry(3,sel?.1:.05,8,64),mat(sel?'#ffffff':d.col));rim.rotation.x=Math.PI/2;rim.position.y=.5;g.add(rim);
+    for(var b=0;b<D.built;b++)g.add(mesh('box',mix(d.col,'#1b1550',.3+.08*(b%3)),1,H[b],1,TS[b][0],.5+H[b]/2,TS[b][1]));
+    var nx=nextIdx(d.id);
+    D.q.forEach(function(it,c){
+      var col=it.age>=3?'#FF6B7A':'#FFC857',em=c===nx?'#666666':null,x,y,z;
+      if(S.mode==='stack'){x=1.4;z=1.5;y=.5+.17+c*.36;g.add(mesh('box',col,.5,.34,.5,x,y,z,em))}
+      else{var row=Math.floor(c/6),cc=c%6;x=-1.65+cc*.66;z=1.7-row*.7;y=.67;g.add(mesh('box',col,.55,.34,.55,x,y,z,em))}
+      if(c===nx){var ar=mesh('cone','#ffffff',.18,.35,.18,x,y+.6,z);ar.rotation.z=Math.PI;ar.userData.by=y+.6;g.add(ar);F.bobs.push(ar)}
+    });
+    var cl=new THREE.Group();cl.position.y=4.6;
+    if(w===0){cl.add(mesh('sph','#FFC857',.45,.45,.45,0,0,0,'#FFC857'))}
+    else{var cc=w===1?'#9a94c4':'#3d3358';
+      [[-.6,0,0,.75,.45,.55],[.1,.15,0,.9,.55,.65],[.8,-.05,.1,.6,.4,.5]].forEach(function(p){cl.add(mesh('sph',cc,p[3],p[4],p[5],p[0],p[1],p[2]))});
+      if(w===2){var n=60,pos=new Float32Array(n*3);for(var k=0;k<n;k++){pos[k*3]=(Math.random()-.5)*2.6;pos[k*3+1]=Math.random()*4;pos[k*3+2]=(Math.random()-.5)*2.6}
+        var pg=new THREE.BufferGeometry();pg.setAttribute('position',new THREE.BufferAttribute(pos,3));
+        var pts=new THREE.Points(pg,new THREE.PointsMaterial({color:'#9fb4ff',size:.09}));pts.position.y=-4.2;cl.add(pts);F.rains.push(pts)}}
+    g.add(cl);F.world.add(g);
+  });
+  var avg=DIST.reduce(function(a,d){return a+wx(d.id)},0)/6,bg=mix('#0F0B2A','#2a0f1e',avg);
+  F.scene.background=new THREE.Color(bg);F.scene.fog=new THREE.Fog(bg,18,42);
+}
+function loopFree(now){
+  if(S.tab!=='free'||!F.ready){F.raf=0;return}
+  F.raf=requestAnimationFrame(loopFree);
+  var dt=Math.min(.05,(now-(F.last||now))/1000);F.last=now;
+  if(!F.drag&&!REDUCED)F.theta+=dt*.08;
+  var c=F.cam;c.position.set(F.rad*Math.sin(F.phi)*Math.cos(F.theta),F.rad*Math.cos(F.phi),F.rad*Math.sin(F.phi)*Math.sin(F.theta));c.lookAt(0,1,0);
+  if(!REDUCED){
+    F.bobs.forEach(function(m){m.position.y=m.userData.by+Math.sin(now/300)*.08});
+    F.rains.forEach(function(p){var a=p.geometry.attributes.position;for(var k=0;k<a.count;k++){var y=a.getY(k)-dt*4;if(y<0)y=4;a.setY(k,y)}a.needsUpdate=true});
+  }
+  F.r.render(F.scene,c);
+}
+
+/* ---------- wiring ---------- */
+function renderAll(){
+  renderBar();
+  if(S.tab==='iso')renderIso();
+  if(S.tab==='hybrid'){renderHero();renderCards()}
+  if(S.tab==='free')buildFree();
+}
+function setTab(t){
+  S.tab=t;
+  ['iso','free','hybrid'].forEach(function(k){$('tab-'+k).hidden=k!==t});
+  document.querySelectorAll('[data-tab]').forEach(function(b){b.setAttribute('aria-selected',String(b.dataset.tab===t))});
+  try{history.replaceState(null,'','#'+t)}catch(e){}
+  if(t==='free'){initFree();sizeFree();if(F.ready&&!F.raf){F.last=0;F.raf=requestAnimationFrame(loopFree)}}
+  renderAll();
+}
+document.addEventListener('click',function(e){
+  var el=e.target.closest('[data-tab],[data-do],[data-mode],[data-sel]');if(!el)return;
+  if(el.dataset.tab)return setTab(el.dataset.tab);
+  if(el.dataset.do)return act(el.dataset.do);
+  if(el.dataset.mode){if(S.mode!==el.dataset.mode){S.mode=el.dataset.mode;S.log=S.mode==='queue'?'Queue mode: the oldest task is now next, so stale work gets done first.':'Stack mode: the newest task is next, so old work sinks to the bottom.';renderAll()}return}
+  if(el.dataset.sel){S.sel=el.dataset.sel;S.log='Selected '+dn(S.sel)+'.';renderAll()}
+});
+var h0=(location.hash||'').slice(1);
+setTab(['iso','free','hybrid'].indexOf(h0)>=0?h0:'iso');
+window.addEventListener('hashchange',function(){var h=(location.hash||'').slice(1);if(['iso','free','hybrid'].indexOf(h)>=0&&h!==S.tab)setTab(h)});
+})();
+</script>

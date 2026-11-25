@@ -9,7 +9,7 @@ export default defineConfig({
   webServer: {
     command: "pnpm exec next start -p 3100",
     url: "http://localhost:3100",
-    reuseExistingServer: true,
+    reuseExistingServer: !process.env.CI,
     timeout: 60000,
   },
   projects: [
