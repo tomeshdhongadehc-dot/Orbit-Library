@@ -6,30 +6,39 @@ import { search, type Hit } from "@/lib/search";
 import type { SearchEntry } from "@/lib/types";
 
 export function SearchBox() {
-  const index = useRef<SearchEntry[] | null>(null);
+  const loading = useRef<Promise<SearchEntry[] | null> | null>(null);
+  const latest = useRef("");
   const [q, setQ] = useState("");
   const [hits, setHits] = useState<Hit[]>([]);
   const [state, setState] = useState<"idle" | "loading" | "ready" | "error">("idle");
 
-  async function ensure(): Promise<SearchEntry[] | null> {
-    if (index.current) return index.current;
-    if (state === "loading") return null;
-    setState("loading");
-    try {
-      const res = await fetch("/search.json");
-      index.current = (await res.json()) as SearchEntry[];
-      setState("ready");
-      return index.current;
-    } catch {
-      setState("error");
-      return null;
+  // One shared load promise, so a query typed while the index is loading is answered when it arrives.
+  function ensure(): Promise<SearchEntry[] | null> {
+    if (!loading.current) {
+      setState("loading");
+      loading.current = fetch("/search.json")
+        .then((res) => {
+          if (!res.ok) throw new Error(String(res.status));
+          return res.json() as Promise<SearchEntry[]>;
+        })
+        .then((data) => {
+          setState("ready");
+          return data;
+        })
+        .catch(() => {
+          loading.current = null;
+          setState("error");
+          return null;
+        });
     }
+    return loading.current;
   }
 
   async function onChange(v: string) {
+    latest.current = v;
     setQ(v);
     const idx = await ensure();
-    if (idx) setHits(search(idx, v));
+    if (idx && latest.current === v) setHits(search(idx, v));
   }
 
   return (

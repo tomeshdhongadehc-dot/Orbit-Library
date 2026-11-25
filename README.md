@@ -20,6 +20,10 @@ pnpm test:e2e       # browser tests at 375, 768 and 1280 px (needs: pnpm exec pl
 - `visibility` in a catalog file is the real control: items that are not `public` are never copied into the build.
 - `public/a/<id>/` (generated, not committed) holds each study page. `public/search.json` is the search index.
 
+## Study-page extras added at build time
+- Google Fonts links are replaced by self-hosted latin fonts in `public/fonts/` (`node tools/fetch-fonts.mjs` fetches them once; they are open-licence fonts).
+- A small "Library" back link is injected into every study page.
+
 ## Rules
 - Nothing sensitive goes in this repository. It is public.
 - A page is `audited` only after an independent check against original documents. None is yet; the tests fail if a catalog file claims it.

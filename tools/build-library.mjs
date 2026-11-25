@@ -40,6 +40,7 @@ const excluded = all.filter((i) => !included.includes(i));
 rmSync(join(repo, "public", "a"), { recursive: true, force: true });
 mkdirSync(join(repo, "public", "a"), { recursive: true });
 const HEAD = '<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">';
+const BACK = '<a href="/" id="orbit-back" aria-label="Back to Orbit Library">&larr; Library</a><style>#orbit-back{position:fixed;left:12px;bottom:12px;z-index:2147483000;padding:6px 12px;border-radius:999px;font:600 13px/1.2 system-ui,sans-serif;background:rgba(20,20,30,.82);color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,.25);backdrop-filter:blur(6px);opacity:.85}#orbit-back:hover,#orbit-back:focus-visible{opacity:1;outline:2px solid #fff;outline-offset:2px}@media print{#orbit-back{display:none}}</style>';
 let totalBytes = 0;
 const sizes = [];
 for (const it of included) {
@@ -57,6 +58,16 @@ for (const it of included) {
     if (!hasViewport) add += '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">';
     if (add) html = html.replace(/<head[^>]*>/i, (m) => m + add);
   }
+  // Self-host fonts: replace Google Fonts links with the local stylesheet (see tools/fetch-fonts.mjs)
+  let first = true;
+  html = html.replace(/<link[^>]+(?:fonts\.googleapis\.com|fonts\.gstatic\.com)[^>]*>/gi, () => {
+    if (!first) return "";
+    first = false;
+    return '<link rel="stylesheet" href="/fonts/fonts.css">';
+  });
+  must(!first || !/fonts\.googleapis\.com\/css/.test(html), `${it.id}: a Google Fonts stylesheet remained`);
+  // Shared back link to the library (pages may be fragments without </body>)
+  html = /<\/body>/i.test(html) ? html.replace(/<\/body>/i, () => BACK + "</body>") : html + BACK;
   const dir = join(repo, "public", "a", it.id);
   mkdirSync(dir, { recursive: true });
   writeFileSync(join(dir, "index.html"), html);

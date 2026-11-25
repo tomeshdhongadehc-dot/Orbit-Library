@@ -212,6 +212,14 @@
 
 /* ---------- PART 5: SITE COMPONENTS (classes used by pages) ---------- */
 @layer components {
+  .o-visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
   .o-page {
     width: 100%;
     max-width: var(--page-max);

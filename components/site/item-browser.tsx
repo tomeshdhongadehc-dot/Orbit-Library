@@ -61,6 +61,7 @@ export function ItemBrowser({ items }: { items: CatalogItem[] }) {
       <p className="o-muted" aria-live="polite">
         Showing {shown.length} of {items.length}
       </p>
+      <h2 className="o-visually-hidden">Results</h2>
       <div className="o-grid">
         {shown.map((i) => (
           <ItemCard key={i.id} item={i} />
