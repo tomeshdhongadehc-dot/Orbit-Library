@@ -11,7 +11,7 @@
     "check:css": "node tools/check-css.mjs",
     "test": "vitest run",
     "test:e2e": "playwright test",
-    "verify": "node tools/check-css.mjs && node tools/scan-secrets.mjs && next build && pnpm typecheck && pnpm lint && vitest run",
+    "verify": "node tools/check-css.mjs && node tools/scan-secrets.mjs && pnpm build && pnpm typecheck && pnpm lint && vitest run",
     "scan:secrets": "node tools/scan-secrets.mjs",
     "audit:deps": "pnpm audit --prod --audit-level=moderate",
     "typecheck": "tsc --noEmit"
