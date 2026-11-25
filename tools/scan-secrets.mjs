@@ -12,7 +12,8 @@ const RULES = [
   ["Slack token", /\bxox[abprs]-[A-Za-z0-9-]{10,}\b/],
   ["API key (sk-)", /\bsk-[A-Za-z0-9]{32,}\b/],
   ["JWT", /\beyJ[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\b/],
-  ["env secret assignment", /^\s*[A-Z][A-Z0-9_]*(?:SECRET|PASSWORD|TOKEN|API_KEY)\s*=\s*[^\s#'"$<{][^\s#]{7,}/m],
+  ["secret assignment", /\b[A-Za-z0-9_]*(?:secret|password|passwd|token|api_?key)["']?\s*[:=]\s*["']?(?![\s#$<{'"]|process\.env|(?:req|body|this|config|env|args|opts|user|data|params|ctx)\.|[^"'\s]*(?:dev-only|example|changeme|dummy|fake|demo|placeholder)|your[-_])(?=[A-Za-z+\/_.=-]*\d)[A-Za-z0-9+\/_\-.=]{12,}/i],
+  ["provider key", /\b(?:sk_live_[0-9A-Za-z]{16,}|sk-(?:proj|ant)-[A-Za-z0-9_-]{20,}|AIza[0-9A-Za-z_-]{35}|npm_[A-Za-z0-9]{36})\b/],
   ["company or personal identity", /humancloud|tomesh\.dhongade|getacaii|acai-ai-platform/i],
 ];
 const SAFE_DOMAINS = /^(?:example\.(?:com|org|test)|x\.(?:com|io|test)|b\.com|evil\.test|users\.noreply\.github\.com|[a-z0-9-]+\.test)$/i;

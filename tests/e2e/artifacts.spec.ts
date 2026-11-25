@@ -79,6 +79,7 @@ test("js-in-motion shows its heading and scrolls without errors", async ({ page 
   await page.goto("/a/js-in-motion");
   await expect(page.locator("h1")).toContainText("in motion");
   await page.mouse.wheel(0, 1500);
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
   expect(errors).toEqual([]);
 });
 
@@ -114,6 +115,8 @@ test.describe("study page contrast", () => {
     test(`${id} has no colour-contrast failures`, async ({ page }) => {
       for (const hash of ["", "#interview", "#revise"]) {
         await page.goto(`/a/${id}${hash}`);
+        await page.reload(); // a hash-only goto does not reload; reload so every view is tested fresh
+        await page.waitForLoadState("load");
         await page.waitForTimeout(400);
         const r = await new AxeBuilder({ page }).withRules(["color-contrast"]).analyze();
         expect(r.violations.flatMap((v) => v.nodes.map((n) => n.target.join(" "))), `${id}${hash}`).toEqual([]);

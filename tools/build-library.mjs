@@ -51,7 +51,7 @@ const PATCH_SETS = {
   orbit: [
     [/--a1: #0a9a85; --a2: #6a47e0; --a3: #d97706; --a4: #e11d62;/g, "--on-a1: #ffffff; --a1: #056a5c; --a2: #6a47e0; --a3: #8f4d08; --a4: #b8114d;"],
     [/--a1: #2de2c4;/g, "--on-a1: #04201c; --a1: #2de2c4;"],
-    [/color: ?#04201c/g, "color: var(--on-a1)"],
+    [/(?<![-\w])color: ?#04201c/g, "color: var(--on-a1)"],
   ],
   tome: [
     [/#7a7499/gi, "#a29dc0"],
