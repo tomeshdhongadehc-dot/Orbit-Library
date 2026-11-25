@@ -1,0 +1,23 @@
+{
+  "visibility": "public",
+  "access": "public",
+  "prerequisites": [],
+  "id": "tomeverse-world",
+  "title": "Tomeverse World",
+  "type": "three-d",
+  "shelf": "Experiments",
+  "track": "3D worlds",
+  "description": "Early draft of the Tomeverse 3D world.",
+  "tags": [
+    "3d",
+    "tomeverse"
+  ],
+  "version": "legacy",
+  "date": "2026-11-23",
+  "status": "legacy",
+  "source": "OFFLINE/earlier-pages/tomeverse-world.html",
+  "sources": null,
+  "reviewBy": "2027-05-23",
+  "entry": "/a/tomeverse-world/",
+  "flag": "FLAG_ITEM_TOMEVERSE_WORLD"
+}

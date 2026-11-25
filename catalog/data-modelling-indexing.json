@@ -1,0 +1,25 @@
+{
+  "visibility": "public",
+  "access": "public",
+  "prerequisites": [],
+  "id": "data-modelling-indexing",
+  "title": "Data Modelling and Indexing Orbit",
+  "type": "orbit",
+  "shelf": "Development",
+  "track": "Data",
+  "description": "Data modelling, normalisation, indexes, query plans and trade-offs, with interview practice and revision sheets.",
+  "tags": [
+    "sql",
+    "indexes",
+    "modelling",
+    "database"
+  ],
+  "version": "1.1",
+  "date": "2026-11-24",
+  "status": "verified",
+  "source": "dist/data-modelling-indexing.html",
+  "sources": "Inside the page: Revise, Sources and proofs",
+  "reviewBy": "2027-11-24",
+  "entry": "/a/data-modelling-indexing/",
+  "flag": "FLAG_ITEM_DATA_MODELLING_INDEXING"
+}

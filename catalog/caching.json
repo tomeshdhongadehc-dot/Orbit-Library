@@ -1,0 +1,25 @@
+{
+  "visibility": "public",
+  "access": "public",
+  "prerequisites": [],
+  "id": "caching",
+  "title": "Cache Orbit",
+  "type": "orbit",
+  "shelf": "Development",
+  "track": "Backend",
+  "description": "Caching from browser to database: strategies, invalidation, Redis and Memcached, consistent hashing, locks and failure modes.",
+  "tags": [
+    "cache",
+    "redis",
+    "memcached",
+    "cdn"
+  ],
+  "version": "1.0",
+  "date": "2026-11-24",
+  "status": "verified",
+  "source": "dist/caching.html",
+  "sources": "Inside the page: Revise, Sources and proofs",
+  "reviewBy": "2027-11-24",
+  "entry": "/a/caching/",
+  "flag": "FLAG_ITEM_CACHING"
+}

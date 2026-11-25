@@ -1,0 +1,23 @@
+{
+  "visibility": "public",
+  "access": "public",
+  "prerequisites": [],
+  "id": "tomeverse-globe",
+  "title": "Tomeverse Globe",
+  "type": "three-d",
+  "shelf": "Experiments",
+  "track": "3D worlds",
+  "description": "Draft of the Tomeverse globe scene.",
+  "tags": [
+    "3d",
+    "tomeverse"
+  ],
+  "version": "legacy",
+  "date": "2026-11-23",
+  "status": "legacy",
+  "source": "OFFLINE/earlier-pages/tomeverse-globe.html",
+  "sources": null,
+  "reviewBy": "2027-05-23",
+  "entry": "/a/tomeverse-globe/",
+  "flag": "FLAG_ITEM_TOMEVERSE_GLOBE"
+}

@@ -1,0 +1,23 @@
+{
+  "visibility": "public",
+  "access": "public",
+  "prerequisites": [],
+  "id": "tomeverse-archipelago",
+  "title": "Tomeverse Archipelago",
+  "type": "three-d",
+  "shelf": "Experiments",
+  "track": "3D worlds",
+  "description": "Draft of the Tomeverse archipelago scene.",
+  "tags": [
+    "3d",
+    "tomeverse"
+  ],
+  "version": "legacy",
+  "date": "2026-11-23",
+  "status": "legacy",
+  "source": "OFFLINE/earlier-pages/tomeverse-archipelago.html",
+  "sources": null,
+  "reviewBy": "2027-05-23",
+  "entry": "/a/tomeverse-archipelago/",
+  "flag": "FLAG_ITEM_TOMEVERSE_ARCHIPELAGO"
+}

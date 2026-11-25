@@ -1,0 +1,23 @@
+{
+  "visibility": "public",
+  "access": "public",
+  "prerequisites": [],
+  "id": "js-react",
+  "title": "React Orbit",
+  "type": "orbit",
+  "shelf": "Development",
+  "track": "Frontend",
+  "description": "React concepts as animated lessons, from components and state to rendering and performance.",
+  "tags": [
+    "react",
+    "frontend"
+  ],
+  "version": "legacy",
+  "date": "2026-11-19",
+  "status": "legacy",
+  "source": "OFFLINE/earlier-pages/js-react.html",
+  "sources": null,
+  "reviewBy": "2027-05-19",
+  "entry": "/a/js-react/",
+  "flag": "FLAG_ITEM_JS_REACT"
+}

@@ -1,0 +1,25 @@
+{
+  "visibility": "public",
+  "access": "public",
+  "prerequisites": [],
+  "id": "api-design",
+  "title": "API Design Orbit",
+  "type": "orbit",
+  "shelf": "Development",
+  "track": "Backend",
+  "description": "REST and API design from first principles: resources, status codes, pagination, versioning, idempotency, security and hard interview questions.",
+  "tags": [
+    "api",
+    "rest",
+    "http",
+    "design"
+  ],
+  "version": "1.3",
+  "date": "2026-11-24",
+  "status": "verified",
+  "source": "dist/api-design.html",
+  "sources": "Inside the page: Revise, Sources and proofs",
+  "reviewBy": "2027-11-24",
+  "entry": "/a/api-design/",
+  "flag": "FLAG_ITEM_API_DESIGN"
+}

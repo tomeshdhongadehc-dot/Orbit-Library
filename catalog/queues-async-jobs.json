@@ -1,0 +1,31 @@
+{
+  "visibility": "public",
+  "access": "public",
+  "prerequisites": [],
+  "id": "queues-async-jobs",
+  "title": "Queue Orbit",
+  "type": "orbit",
+  "shelf": "Development",
+  "track": "Backend",
+  "description": "Queues and asynchronous jobs: delivery guarantees, retries, dead-letter queues, ordering, Kafka, RabbitMQ, SQS and workflows.",
+  "tags": [
+    "queues",
+    "kafka",
+    "rabbitmq",
+    "sqs",
+    "jobs"
+  ],
+  "version": "1.0",
+  "date": "2026-11-24",
+  "status": "verified",
+  "source": "dist/queues-async-jobs.html",
+  "sources": "Inside the page: Revise, Sources and proofs",
+  "counts": {
+    "Lessons": 29,
+    "Quiz questions": 609,
+    "Interview concepts": 190
+  },
+  "reviewBy": "2027-11-24",
+  "entry": "/a/queues-async-jobs/",
+  "flag": "FLAG_ITEM_QUEUES_ASYNC_JOBS"
+}

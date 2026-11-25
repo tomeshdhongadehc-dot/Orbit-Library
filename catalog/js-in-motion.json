@@ -1,0 +1,23 @@
+{
+  "visibility": "public",
+  "access": "public",
+  "prerequisites": [],
+  "id": "js-in-motion",
+  "title": "JS in Motion",
+  "type": "orbit",
+  "shelf": "Development",
+  "track": "Languages",
+  "description": "An early prototype that shows JavaScript ideas as motion.",
+  "tags": [
+    "javascript",
+    "prototype"
+  ],
+  "version": "legacy",
+  "date": "2026-11-19",
+  "status": "legacy",
+  "source": "OFFLINE/earlier-pages/js-in-motion.html",
+  "sources": null,
+  "reviewBy": "2027-05-19",
+  "entry": "/a/js-in-motion/",
+  "flag": "FLAG_ITEM_JS_IN_MOTION"
+}

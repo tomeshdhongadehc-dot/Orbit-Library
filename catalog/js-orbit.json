@@ -1,0 +1,23 @@
+{
+  "visibility": "public",
+  "access": "public",
+  "prerequisites": [],
+  "id": "js-orbit",
+  "title": "JS Orbit",
+  "type": "orbit",
+  "shelf": "Development",
+  "track": "Languages",
+  "description": "JavaScript from the first line to advanced topics, as animated step-by-step lessons.",
+  "tags": [
+    "javascript",
+    "language"
+  ],
+  "version": "legacy",
+  "date": "2026-11-19",
+  "status": "legacy",
+  "source": "OFFLINE/earlier-pages/js-orbit.html",
+  "sources": null,
+  "reviewBy": "2027-05-19",
+  "entry": "/a/js-orbit/",
+  "flag": "FLAG_ITEM_JS_ORBIT"
+}

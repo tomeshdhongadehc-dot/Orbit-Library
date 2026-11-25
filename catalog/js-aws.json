@@ -1,0 +1,23 @@
+{
+  "visibility": "public",
+  "access": "public",
+  "prerequisites": [],
+  "id": "js-aws",
+  "title": "AWS Orbit",
+  "type": "orbit",
+  "shelf": "Deployment",
+  "track": "Cloud",
+  "description": "Amazon Web Services concepts as animated lessons.",
+  "tags": [
+    "aws",
+    "cloud"
+  ],
+  "version": "legacy",
+  "date": "2026-11-20",
+  "status": "legacy",
+  "source": "OFFLINE/earlier-pages/js-aws.html",
+  "sources": null,
+  "reviewBy": "2027-05-20",
+  "entry": "/a/js-aws/",
+  "flag": "FLAG_ITEM_JS_AWS"
+}

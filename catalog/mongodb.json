@@ -1,0 +1,31 @@
+{
+  "visibility": "public",
+  "access": "public",
+  "prerequisites": [],
+  "id": "mongodb",
+  "title": "Mongo Orbit",
+  "type": "orbit",
+  "shelf": "Development",
+  "track": "Data",
+  "description": "MongoDB from documents to sharding: schema design, indexes, aggregation, replication, transactions, security and production failure modes. Checked against MongoDB 9.0 documentation.",
+  "tags": [
+    "mongodb",
+    "nosql",
+    "sharding",
+    "aggregation",
+    "replication"
+  ],
+  "version": "1.0",
+  "date": "2026-11-25",
+  "status": "verified",
+  "source": "dist/mongodb.html",
+  "sources": "Inside the page: Revise, Sources and proofs",
+  "counts": {
+    "Lessons": 32,
+    "Quiz questions": 672,
+    "Interview concepts": 190
+  },
+  "reviewBy": "2027-05-25",
+  "entry": "/a/mongodb/",
+  "flag": "FLAG_ITEM_MONGODB"
+}

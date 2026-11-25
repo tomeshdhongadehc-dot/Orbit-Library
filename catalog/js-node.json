@@ -1,0 +1,24 @@
+{
+  "visibility": "public",
+  "access": "public",
+  "prerequisites": [],
+  "id": "js-node",
+  "title": "Node Orbit",
+  "type": "orbit",
+  "shelf": "Development",
+  "track": "Backend",
+  "description": "Node.js internals and practice as animated lessons: the event loop, streams, modules and production concerns.",
+  "tags": [
+    "node",
+    "backend",
+    "event-loop"
+  ],
+  "version": "legacy",
+  "date": "2026-11-21",
+  "status": "legacy",
+  "source": "OFFLINE/earlier-pages/js-node.html",
+  "sources": null,
+  "reviewBy": "2027-05-21",
+  "entry": "/a/js-node/",
+  "flag": "FLAG_ITEM_JS_NODE"
+}
